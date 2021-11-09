@@ -151,7 +151,7 @@
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:padding="@dimen/_10sdp">
+                            android:padding="@dimen/paddingDetail">
 
                             <TextView
                                 style="@style/TextView"
@@ -194,6 +194,25 @@
 
                             <TextView
                                 style="@style/TextView"
+                                android:text="Kỳ" />
+
+                            <TextView
+                                android:id="@+id/tv_draw_code"
+                                style="@style/TextView"
+                                android:layout_alignParentEnd="true"
+                                android:text="#"
+                                android:textColor="@color/colorPrimary"
+                                android:textStyle="bold" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            android:padding="@dimen/paddingDetail">
+
+                            <TextView
+                                style="@style/TextView"
                                 android:text="Tổng tiền/ Kỳ" />
 
                             <TextView
@@ -227,7 +246,9 @@
                     android:id="@+id/ll_image"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_6sdp"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
+                    android:layout_marginBottom="@dimen/_6sdp"
                     android:background="@color/white"
                     android:orientation="horizontal">
 

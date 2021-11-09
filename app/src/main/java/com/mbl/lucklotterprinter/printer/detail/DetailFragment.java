@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.icu.number.CompactNotation;
 import android.net.Uri;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +27,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.mbl.lucklotterprinter.R;
 import com.mbl.lucklotterprinter.dialog.ProcessFragDialog;
+import com.mbl.lucklotterprinter.model.DrawModel;
 import com.mbl.lucklotterprinter.model.EmployeeModel;
 import com.mbl.lucklotterprinter.model.ImageModel;
 import com.mbl.lucklotterprinter.model.ItemModel;
@@ -40,6 +42,7 @@ import com.mbl.lucklotterprinter.printer.upload.UploadPresenter;
 import com.mbl.lucklotterprinter.service.BluetoothServices;
 import com.mbl.lucklotterprinter.utils.BitmapUtils;
 import com.mbl.lucklotterprinter.utils.Constants;
+import com.mbl.lucklotterprinter.utils.DateTimeUtils;
 import com.mbl.lucklotterprinter.utils.DialogHelper;
 import com.mbl.lucklotterprinter.utils.DrawViewUtils;
 import com.mbl.lucklotterprinter.utils.MediaUltis;
@@ -49,12 +52,15 @@ import com.mbl.lucklotterprinter.utils.Toast;
 import com.mbl.lucklotterprinter.utils.Utils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -67,6 +73,8 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     TextView tvBluetooth;
     @BindView(R.id.iv_type_ticket)
     ImageView img_logo;
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
     @BindView(R.id.tv_game)
     TextView tv_game;
     @BindView(R.id.tv_fullName)
@@ -81,6 +89,8 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     TextView tv_quantity;
     @BindView(R.id.tv_system)
     TextView tvSystem;
+    @BindView(R.id.tv_draw_code)
+    TextView tv_draw_code;
 
     @BindView(R.id.btn_ok)
     Button btnOk;
@@ -107,6 +117,7 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     String deviceBluetooth = "";
 
     List<ItemModel> mItemModels;
+    List<DrawModel> mDrawModels;
 
     List<LineModel> mLineModels;
     RowAdapter rowAdapter;
@@ -117,6 +128,7 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     long SymbolNumber = Constants.SymbolNumber;
 
     boolean IsPrint = false;
+    boolean IsExpires = false;
     String ticketType = Constants.TICKET_NO_AMOUNT;
     boolean IsBefore = true;
     OrderModel mOrderModel;
@@ -126,6 +138,9 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     String systematic = "";
 
     EmployeeModel employeeModel;
+    boolean IsKenoPlus = false;
+    SharedPref sharedPref;
+
 
     public static DetailFragment getInstance() {
         return new DetailFragment();
@@ -139,10 +154,12 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     @Override
     public void initLayout() {
         super.initLayout();
-
+        sharedPref = new SharedPref(requireActivity());
         mItemModels = new ArrayList<>();
         mLineModels = new ArrayList<>();
+        mDrawModels = new ArrayList<>();
 
+        IsExpires = false;
         SharedPref sharedPref = new SharedPref(getActivity());
         deviceBluetooth = sharedPref.getString(Constants.BLUETOOTH_NAME, "");
         employeeModel = sharedPref.getEmployeeModel();
@@ -157,6 +174,7 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
 
         if (mPresenter != null) {
             mOrderModel = mPresenter.getOrderModel();
+            mDrawModels = mPresenter.getDrawModels();
 
             switch (mOrderModel.getProductID()) {
                 case Constants.PRODUCT_MEGA:
@@ -193,11 +211,13 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
             tv_amount.setText(NumberUtils.formatPriceNumber(mOrderModel.getAmount()) + "/" + mOrderModel.getQuantity());
             tv_mobile_number.setText(mOrderModel.getMobileNumber());
             tv_quantity.setText(String.valueOf(mOrderModel.getQuantity()));
+            tvTitle.setText("In vé #" + mOrderModel.getOrderCode());
 
             if (mOrderModel.getProductID() == Constants.PRODUCT_KENO || mOrderModel.getProductID() == Constants.PRODUCT_MAX3D) {
                 ll_image_after.setVisibility(View.GONE);
-                if (mOrderModel.getProductID() == Constants.PRODUCT_KENO)
+                if (mOrderModel.getProductID() == Constants.PRODUCT_KENO) {
                     btnReject.setEnabled(false);
+                }
             }
         }
     }
@@ -206,9 +226,16 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     public void showItem(List<ItemModel> orderModels, String printCode) {
         mItemModels.addAll(orderModels);
         mPrintCode = printCode;
+        IsKenoPlus = false;
 
         if (orderModels.get(0).getProductID() == Constants.PRODUCT_KENO) {
-            systematic = "Bậc " + orderModels.get(0).getSystemA();
+
+            if (orderModels.get(0).getItemType() == 2) {
+                IsKenoPlus = true;
+                systematic = "Chẵn lẻ - Lớn nhỏ";
+            }else{
+                systematic = "Bậc " + orderModels.get(0).getSystemA();
+            }
         } else if (orderModels.get(0).getProductID() == Constants.PRODUCT_MAX3D_PRO) {
             if (orderModels.get(0).getItemType() == 2)
                 systematic = "Bao bộ số";
@@ -222,6 +249,13 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
                 systematic = "Bao 5";
         }
         tvSystem.setText(systematic);
+
+        String drawCode = "";
+        if (orderModels.size() > 1) {
+            drawCode = "#" + orderModels.get(0).getDrawCode() + " - " + "#" + orderModels.get(orderModels.size() - 1).getDrawCode() + "/" + mOrderModel.getPrice();
+        } else
+            drawCode = "#" + orderModels.get(0).getDrawCode()+ "/" + mOrderModel.getPrice();
+        tv_draw_code.setText(drawCode);
 
         if (mOrderModel.getTicketCategory() == 2) {
             for (ItemModel item : orderModels) {
@@ -451,7 +485,10 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
         btnReject.setEnabled(false);
         if (mItemModels.size() > 0)
             btnOk.setEnabled(true);
-        new Thread(() -> print(printCommandModel)).start();
+        if (IsKenoPlus)
+            new Thread(() -> printKenoPlus(printCommandModel)).start();
+        else
+            new Thread(() -> print(printCommandModel)).start();
     }
 
     @Override
@@ -493,6 +530,38 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
         mPresenter.updateImage(request);
     }
 
+    private void printKenoPlus(PrintCommandModel printCommandModel) {
+
+        String[] printCommand = printCommandModel.getCommandText().split(",");
+
+        for (String message : printCommand) {
+            BluetoothServices.sendData(message);
+            if (Constants.POSKeyArray.contains(message)) {
+                try {
+                    Thread.sleep(SymbolSpecial);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                if (StringUtils.isNumeric(message)) {
+                    try {
+                        Thread.sleep(SymbolSpecial);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        Thread.sleep(SymbolBase);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        processFragDialog.dismiss();
+        capturePermission(false);
+    }
+
     private void print(PrintCommandModel printCommandModel) {
 
         String[] printCommand = printCommandModel.getCommandText().split(",");
@@ -522,10 +591,12 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
             }
         }
         processFragDialog.dismiss();
-        if (mOrderModel.getProductID() == Constants.PRODUCT_KENO || mItemModels.size() == 1)
+        if (mOrderModel.getProductID() == Constants.PRODUCT_KENO) {// || mItemModels.size() == 1) {
             capturePermission(false);
-        else
-            new UploadPresenter((ContainerView) requireActivity(), mOrderModel, mItemModels, mPrintCode).pushView();
+        }
+//        else {
+//            new UploadPresenter((ContainerView) requireActivity(), mOrderModel, mItemModels, mPrintCode).pushView();
+//        }
     }
 
     @Override
@@ -659,5 +730,51 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
                     }
                 })
                 .request();
+    }
+
+    private void findCurrentDraw(){
+        Date serverTime = DateTimeUtils.convertStringToDateDefault(sharedPref.getString(Constants.KEY_DATE_TIME_NOW, ""));
+        Date drawDateTime = null;
+
+        DrawModel currentDrawModel = null;
+        for (DrawModel drawModel : mDrawModels) {
+            drawDateTime = DateTimeUtils.convertStringToDateDefault(drawModel.getDrawDate() + " " + drawModel.getDrawTime());
+
+            if (DateTimeUtils.compareToDay(serverTime, drawDateTime) < 0
+                    && DateTimeUtils.compareToDay(DateUtils.addMinutes(serverTime, 10), drawDateTime) >= 0) {
+                currentDrawModel = drawModel;
+                break;
+            }
+        }
+
+        if(currentDrawModel != null) {
+            int diffPrintSecond = Integer.parseInt(sharedPref.getString(Constants.KEY_DIFF_PRINT_SECOND, ""));
+            assert drawDateTime != null;
+            Date fromPrintTime = DateUtils.addSeconds(DateUtils.addMinutes(drawDateTime, -10), diffPrintSecond);
+            Date toPrintTime = DateUtils.addSeconds(drawDateTime, diffPrintSecond);
+            String printTime = DateTimeUtils.convertDateToString(fromPrintTime, DateTimeUtils.SIMPLE_TIME_FORMAT) + " - " + DateTimeUtils.convertDateToString(toPrintTime, DateTimeUtils.SIMPLE_TIME_FORMAT);
+
+            long diff = drawDateTime.getTime() - serverTime.getTime();
+            CountdownKeno(diff);
+        }
+    }
+
+    private void CountdownKeno(long diff) {
+        CountDownTimer cdt = new CountDownTimer(diff, 1000) {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long minutes = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
+                millisUntilFinished -= TimeUnit.MINUTES.toMillis(minutes);
+                long seconds = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished);
+            }
+
+            @Override
+            public void onFinish() {
+                cancel();
+                IsExpires = true;
+            }
+        };
+        cdt.start();
     }
 }

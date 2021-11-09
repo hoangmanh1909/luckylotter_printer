@@ -3,6 +3,7 @@ package com.mbl.lucklotterprinter.printer.detail;
 import com.core.base.viper.interfaces.IInteractor;
 import com.core.base.viper.interfaces.IPresenter;
 import com.core.base.viper.interfaces.PresentView;
+import com.mbl.lucklotterprinter.model.DrawModel;
 import com.mbl.lucklotterprinter.model.ItemModel;
 import com.mbl.lucklotterprinter.model.OrderModel;
 import com.mbl.lucklotterprinter.model.PrintCommandModel;
@@ -48,6 +49,7 @@ public interface DetailContract {
         void getItemByCode();
 
         OrderModel getOrderModel();
+        List<DrawModel> getDrawModels();
 
         void print(List<ItemModel> models);
 

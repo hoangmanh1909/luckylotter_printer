@@ -33,27 +33,27 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/ll_keno"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/backgroundHome"
         android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/_10sdp">
+            android:padding="@dimen/_6sdp">
 
             <TextView
                 style="@style/TextView"
                 android:id="@+id/tv_draw"
                 android:textSize="@dimen/_13sdp"
-                android:text="#1111"
                 android:textColor="@color/blue_marter"
                 android:textStyle="bold" />
 
             <TextView
                 style="@style/TextView"
                 android:id="@+id/tv_time"
-                android:text="15:30:30 - 15:39:30"
                 android:textSize="@dimen/_13sdp"
                 android:layout_alignParentEnd="true"
                 android:textColor="@color/blue"/>

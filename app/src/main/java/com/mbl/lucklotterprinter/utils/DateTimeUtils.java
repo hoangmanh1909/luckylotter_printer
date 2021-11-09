@@ -1,11 +1,14 @@
 package com.mbl.lucklotterprinter.utils;
 
+import android.text.TextUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateTimeUtils {
     public static final String DEFAULT_DATETIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
     public static final String SIMPLE_DATE_FORMAT = "dd/MM/yyyy";
+    public static final String SIMPLE_TIME_FORMAT = "HH:mm:ss";
 
     public static Date convertStringToDate(String dateStr, String format) {
         Date date = new Date();
@@ -28,7 +31,22 @@ public class DateTimeUtils {
         return date;
     }
 
-    public static String getCurrentDateString(){
+    public static String convertDateToString(Date date, String format) {
+        String dateStr = "";
+        SimpleDateFormat formatter;
+        if (TextUtils.isEmpty(format))
+            formatter = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
+        else
+            formatter = new SimpleDateFormat(format);
+        try {
+            dateStr = formatter.format(date);
+        } catch (Exception e) {
+
+        }
+        return dateStr;
+    }
+
+    public static String getCurrentDateString() {
         SimpleDateFormat formatter = new SimpleDateFormat(SIMPLE_DATE_FORMAT);
         Date date = new Date();
         return formatter.format(date);

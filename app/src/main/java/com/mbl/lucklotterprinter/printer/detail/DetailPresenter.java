@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import com.core.base.viper.Presenter;
 import com.core.base.viper.interfaces.ContainerView;
+import com.mbl.lucklotterprinter.model.DrawModel;
 import com.mbl.lucklotterprinter.model.ItemModel;
 import com.mbl.lucklotterprinter.model.OrderModel;
 import com.mbl.lucklotterprinter.model.SimpleResult;
@@ -33,11 +34,13 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
         implements DetailContract.Presenter {
 
     OrderModel orderModel;
+    List<DrawModel> drawModels;
 
-    public DetailPresenter(ContainerView containerView, OrderModel orderModel) {
+    public DetailPresenter(ContainerView containerView, OrderModel orderModel,List<DrawModel> drawModels) {
         super(containerView);
 
         this.orderModel = orderModel;
+        this.drawModels = drawModels;
     }
 
     @Override
@@ -66,6 +69,11 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
     @Override
     public OrderModel getOrderModel() {
         return orderModel;
+    }
+
+    @Override
+    public List<DrawModel> getDrawModels() {
+        return getDrawModels();
     }
 
     @Override
@@ -99,7 +107,7 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
                 item.setPrintCode(itemModel.getPrintCode());
                 item.setPidNumber(itemModel.getPidNumber());
                 item.setOrderItemID(itemModel.getOrderItemID());
-                item.setMobileNumber(item.getMobileNumber());
+                item.setMobileNumber(itemModel.getMobileNumber());
                 item.setFullName(itemModel.getFullName());
                 item.setEmailAddress(itemModel.getEmailAddress());
                 item.setDrawDate(itemModel.getDrawDate());
@@ -115,7 +123,7 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
                 item.setPrice(itemModel.getPrice());
                 item.setItemType(itemModel.getItemType());
 
-                itemModel.setLineA(Utils.getCodePrintKeno(Integer.parseInt(itemModel.getLineA())));
+                item.setLineA(Utils.getCodePrintKeno(Integer.parseInt(itemModel.getLineA())));
                 if (!TextUtils.isEmpty(itemModel.getLineB()))
                     item.setLineB(Utils.getCodePrintKeno(Integer.parseInt(itemModel.getLineB())));
                 if (!TextUtils.isEmpty(itemModel.getLineC()))

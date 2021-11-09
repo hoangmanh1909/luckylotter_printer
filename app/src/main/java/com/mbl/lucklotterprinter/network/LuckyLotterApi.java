@@ -74,8 +74,8 @@ public interface LuckyLotterApi {
     Call<BaseResponse> getDateTimeNow();
 
     @GET("api/Result/GetResult")
-    Call<DrawResponse> getResult(@Field("date") String date,
-                                 @Field("ProductID") int product);
+    Call<DrawResponse> getResult(@Query("date") String date,
+                                 @Query("ProductID") int product);
     @GET("api/Dictionary/GetAllConfig")
     Call<ParamsResponse> getAllConfig();
 

@@ -30,9 +30,11 @@ import com.mbl.lucklotterprinter.printer.detail.DetailPresenter;
 import com.mbl.lucklotterprinter.utils.Constants;
 import com.mbl.lucklotterprinter.utils.DateTimeUtils;
 import com.mbl.lucklotterprinter.utils.SharedPref;
+import com.mbl.lucklotterprinter.utils.Toast;
 import com.mbl.lucklotterprinter.utils.Utils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -65,16 +67,14 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
     @BindView(R.id.tv_countdown)
     TextView tv_countdown;
 
+    @BindView(R.id.ll_keno)
+            LinearLayout ll_keno;
+
     PrinterAdapter mAdapter;
     List<OrderModel> mOrderModels;
-
+    boolean IsPrint = true;
+    List<DrawModel> mDrawModels;
     SharedPref sharedPref;
-
-    private Date d1 = null;
-    private Date d2 = null;
-    private Date date;
-    private SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
 
     int productID;
 
@@ -92,6 +92,7 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
         super.initLayout();
         sharedPref = new SharedPref(requireActivity());
         mOrderModels = new ArrayList<>();
+        mDrawModels = new ArrayList<>();
 
         noData.setVisibility(View.GONE);
 
@@ -102,7 +103,10 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
                 super.onBindViewHolder(holder, position);
 
                 holder.itemView.setOnClickListener(v -> {
-                    new DetailPresenter((ContainerView) getBaseActivity(), mOrderModels.get(position)).pushView();
+                    if (IsPrint)
+                        new DetailPresenter((ContainerView) getBaseActivity(), mOrderModels.get(position),mDrawModels).pushView();
+                    else
+                        Toast.showToast(requireContext(), "Đã hết thời gian in vé");
                 });
             }
         };
@@ -112,10 +116,13 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
         productID = intent.getIntExtra(Constants.PRODUCT_ID, 0);
         tv_title.setText(Utils.getProductName(productID));
         if (productID != Constants.PRODUCT_KENO) {
+            ll_keno.setVisibility(View.GONE);
             iv_filter.setVisibility(View.VISIBLE);
             iv_filter.setOnClickListener(v -> pickProduct());
-        } else
+        } else {
+            ll_keno.setVisibility(View.VISIBLE);
             iv_filter.setVisibility(View.GONE);
+        }
 
         iv_back.setOnClickListener(v -> mPresenter.back());
     }
@@ -146,25 +153,50 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
         mAdapter.setItems(mOrderModels);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void showKenoDraw(List<DrawModel> drawModels) {
-        String serverTime = sharedPref.getString(Constants.KEY_DATE_TIME_NOW,"");
-        Date date1 = DateTimeUtils.convertStringToDateDefault(serverTime);
-
-        try {
-            String dateStart = format1.format(date);
-            d1 = format1.parse(dateStart);
-            d2 = format1.parse(serverTime);
-
-            assert d2 != null;
-            long diff = d2.getTime() - d1.getTime();
-            CountdownKeno(diff);
-        } catch (ParseException e) {
-            Log.e(TAG, e.toString());
+        if(drawModels.size() > 0) {
+            mDrawModels.clear();
+            mDrawModels.addAll(drawModels);
+            findCurrentDraw();
         }
     }
 
-    public void CountdownKeno(long diff) {
+    private void findCurrentDraw(){
+        Date serverTime = DateTimeUtils.convertStringToDateDefault(sharedPref.getString(Constants.KEY_DATE_TIME_NOW, ""));
+        Date drawDateTime = null;
+
+        DrawModel currentDrawModel = null;
+        for (DrawModel drawModel : mDrawModels) {
+            drawDateTime = DateTimeUtils.convertStringToDateDefault(drawModel.getDrawDate() + " " + drawModel.getDrawTime());
+
+            if (DateTimeUtils.compareToDay(serverTime, drawDateTime) < 0
+                    && DateTimeUtils.compareToDay(DateUtils.addMinutes(serverTime, 10), drawDateTime) >= 0) {
+                currentDrawModel = drawModel;
+                break;
+            }
+        }
+
+        if(currentDrawModel != null) {
+            int diffPrintSecond = Integer.parseInt(sharedPref.getString(Constants.KEY_DIFF_PRINT_SECOND, ""));
+            assert drawDateTime != null;
+            Date fromPrintTime = DateUtils.addSeconds(DateUtils.addMinutes(drawDateTime, -10), diffPrintSecond);
+            Date toPrintTime = DateUtils.addSeconds(drawDateTime, diffPrintSecond);
+            String printTime = DateTimeUtils.convertDateToString(fromPrintTime, DateTimeUtils.SIMPLE_TIME_FORMAT) + " - " + DateTimeUtils.convertDateToString(toPrintTime, DateTimeUtils.SIMPLE_TIME_FORMAT);
+
+            tv_draw.setText("#" + currentDrawModel.getDrawCode());
+            tv_time.setText(printTime);
+
+            long diff = drawDateTime.getTime() - serverTime.getTime();
+            CountdownKeno(diff);
+        }else{
+            tv_draw.setText("#");
+            tv_time.setText("Hết thời gian in vé");
+        }
+    }
+
+    private void CountdownKeno(long diff) {
         CountDownTimer cdt = new CountDownTimer(diff, 1000) {
             @SuppressLint("SetTextI18n")
             @Override
@@ -178,7 +210,7 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
             @Override
             public void onFinish() {
                 cancel();
-                CountdownKeno(60 * 10 * 1000);
+                findCurrentDraw();
             }
         };
         cdt.start();

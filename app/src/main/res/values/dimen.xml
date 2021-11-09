@@ -4,5 +4,5 @@
     <dimen name="titleHeight">@dimen/_45sdp</dimen>
     <dimen name="logoHeader">@dimen/_35sdp</dimen>
     <dimen name="textHeader">@dimen/_14sdp</dimen>
-    <dimen name="paddingDetail">@dimen/_8sdp</dimen>
+    <dimen name="paddingDetail">@dimen/_6sdp</dimen>
 </resources>
