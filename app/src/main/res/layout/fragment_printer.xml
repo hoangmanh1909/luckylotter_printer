@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/titleHeight"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="@dimen/logoHeader"
+            android:layout_height="@dimen/logoHeader"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:src="@drawable/ic_baseline_keyboard_arrow_left_24" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            style="@style/TextViewTitleHeader"
+            android:layout_centerInParent="true"
+            android:text="Keno" />
+
+        <ImageView
+            android:id="@+id/iv_filter"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:src="@drawable/ic_baseline_filter_list_24" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_10sdp">
+
+            <TextView
+                style="@style/TextView"
+                android:id="@+id/tv_draw"
+                android:textSize="@dimen/_13sdp"
+                android:text="#1111"
+                android:textColor="@color/blue_marter"
+                android:textStyle="bold" />
+
+            <TextView
+                style="@style/TextView"
+                android:id="@+id/tv_time"
+                android:text="15:30:30 - 15:39:30"
+                android:textSize="@dimen/_13sdp"
+                android:layout_alignParentEnd="true"
+                android:textColor="@color/blue"/>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_countdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="@dimen/_6sdp"
+            android:text="00:00"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/_15sdp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+    <com.mbl.lucklotterprinter.view.CustomRecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

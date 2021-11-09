@@ -1,0 +1,75 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
+    flavorDimensions "default"
+
+    defaultConfig {
+        applicationId "com.mbl.lucklotterprinter"
+        minSdkVersion 26
+        targetSdkVersion 30
+        versionCode 4
+        versionName "2.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    productFlavors {
+        dev {
+//            def API_URL = '"http://172.16.132.99:2003/"'
+            def API_URL = '"http://118.70.72.107:2003/"'
+//            def API_URL = '"https://app.mobilott.vn/"'
+
+            def API_KEY = '"DD50AHHRY37CE42C6AAE3T27139E144D5DE9C47D6B08A6FEBFFC9A3B397AF354"'
+            def IMAGE_URL = '"http://118.70.72.107:2003/Assets/Images/"'
+//            def IMAGE_URL = '"https://app.mobilott.vn/Assets/Images/"'
+
+            buildConfigField("String", "IMAGE_URL", IMAGE_URL)
+            buildConfigField("String", "API_URL", API_URL)
+            buildConfigField("String", "API_KEY", API_KEY)
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation project(path: ':Libraries:LKLPrinterCore')
+    implementation project(path: ':Libraries:MaterialCamera')
+    implementation project(path: ':Libraries:UtilCode')
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation 'com.google.android.material:material:1.4.0'
+
+    api "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+    api 'org.apache.commons:commons-lang3:3.12.0'
+    api "com.squareup.okhttp3:logging-interceptor:${okhttpLoggingInterceptorVersion}"
+    api "com.google.guava:guava:${guavaVersion}"
+
+    implementation "com.jakewharton:butterknife:${butterKnifeVersion}"
+    annotationProcessor "com.jakewharton:butterknife-compiler:${butterKnifeVersion}"
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'
+    implementation 'com.google.code.gson:gson:2.8.7'
+    implementation 'com.google.android:flexbox:2.0.1'
+    implementation 'com.facebook.fresco:fresco:1.11.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'com.github.chenupt.android:springindicator:1.0.2@aar'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+}

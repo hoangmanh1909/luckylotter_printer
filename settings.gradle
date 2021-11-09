@@ -1,0 +1,2 @@
+include ':app',':Libraries:LKLPrinterCore',':Libraries:MaterialCamera',':Libraries:UtilCode'
+rootProject.name = "LuckylotterPrinter"

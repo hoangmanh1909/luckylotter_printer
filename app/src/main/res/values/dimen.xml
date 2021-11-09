@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="buttonHeight">@dimen/_36sdp</dimen>
+    <dimen name="titleHeight">@dimen/_45sdp</dimen>
+    <dimen name="logoHeader">@dimen/_35sdp</dimen>
+    <dimen name="textHeader">@dimen/_14sdp</dimen>
+    <dimen name="paddingDetail">@dimen/_8sdp</dimen>
+</resources>

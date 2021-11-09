@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">LuckylotterPrinter</string>
+    <string name="default_notification_channel_id">fcm_winluck_channel</string>
+    <string name="fcm_message">FCM Message</string>
+    <string name="error_system_upgrading">Hệ thống đang nâng cấp. Vui lòng quay lại sau!</string>
+    <string name="error_fail_default">Hệ thống đang bận. Vui lòng thử lại sau!</string>
+    <string name="error_empty_phone">Vui lòng nhập số điện thoại</string>
+    <string name="error_password_empty">Vui lòng nhập mật khẩu</string>
+    <string name="error_empty_otp">Vui lòng nhập mã xác nhận</string>
+    <string name="no_data">Không có dữ liệu</string>
+    <string name="error_warning_phone">Số điện thoại không hợp lệ</string>
+
+    <string name="printer_keno">Keno</string>
+    <string name="printer_mega">Mega 6/45</string>
+    <string name="printer_normal">Các sản phẩm khác</string>
+    <string name="printer_max3d_pro">Max3D pro</string>
+    <string name="printer_max3d">Max3D </string>
+    <string name="printer_max3d_plus">Max3D cộng</string>
+    <string name="printer_power">Power</string>
+
+    <string name="cam_use_capture">Sử dụng</string>
+    <string name="cam_retry_capture">Thử lại</string>
+    <string name="permission_rationale_message">You have rejected us to apply for authorization, please agree to authorization, otherwise the function can\'t be used normally!</string>
+    <string name="permission_denied_forever_message">We need some of the permissions you rejected or the system failed to apply failed, please manually set to the page authorize, otherwise the function can\'t be used normally!</string>
+</resources>

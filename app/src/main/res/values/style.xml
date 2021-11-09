@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
+    </style>
+
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/push_top_down</item>
+        <item name="android:windowExitAnimation">@anim/push_bottom_up</item>
+    </style>
+
+    <style name="Button">
+        <item name="android:background">@drawable/bg_button_primary</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/buttonHeight</item>
+        <item name="android:layout_margin">@dimen/_10sdp</item>
+    </style>
+
+    <style name="SplashscreenTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_splashscreen</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+    </style>
+
+    <style name="Widget.App.BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
+    </style>
+
+    <style name="ThemeOverlay.App.BottomNavigationView" parent="">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.1dp</item>
+        <item name="android:background">@color/dark_grey</item>
+    </style>
+
+    <style name="RelativeLayoutPersonal">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">@dimen/_10sdp</item>
+    </style>
+
+    <style name="ImageViewPersonal">
+        <item name="android:layout_width">@dimen/_24sdp</item>
+        <item name="android:layout_height">@dimen/_24sdp</item>
+        <item name="android:padding">@dimen/_4sdp</item>
+        <item name="android:layout_marginEnd">@dimen/_10sdp</item>
+        <item name="android:background">@drawable/bg_color_personal</item>
+    </style>
+
+    <style name="ImageViewArrowRight">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:src">@drawable/ic_baseline_keyboard_arrow_right_24</item>
+    </style>
+
+    <style name="TextViewTitleHeader">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/textHeader</item>
+    </style>
+
+    <style name="TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:color">@color/black</item>
+        <item name="android:textSize">@dimen/_12sdp</item>
+    </style>
+
+</resources>
