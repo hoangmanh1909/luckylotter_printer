@@ -45,6 +45,27 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rl_keno"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_6sdp">
+
+        <TextView
+            style="@style/TextView"
+            android:id="@+id/tv_draw"
+            android:textSize="@dimen/_13sdp"
+            android:textColor="@color/blue_marter"
+            android:textStyle="bold" />
+
+        <TextView
+            style="@style/TextView"
+            android:id="@+id/tv_time"
+            android:textSize="@dimen/_13sdp"
+            android:layout_alignParentEnd="true"
+            android:textColor="@color/blue"/>
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

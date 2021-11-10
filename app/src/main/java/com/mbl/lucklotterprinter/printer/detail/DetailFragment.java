@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,6 +41,7 @@ import com.mbl.lucklotterprinter.printer.PrinterFragment;
 import com.mbl.lucklotterprinter.printer.detail.outOfNumber.OutOfNumberPresenter;
 import com.mbl.lucklotterprinter.printer.upload.UploadPresenter;
 import com.mbl.lucklotterprinter.service.BluetoothServices;
+import com.mbl.lucklotterprinter.service.TimeService;
 import com.mbl.lucklotterprinter.utils.BitmapUtils;
 import com.mbl.lucklotterprinter.utils.Constants;
 import com.mbl.lucklotterprinter.utils.DateTimeUtils;
@@ -91,6 +93,10 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     TextView tvSystem;
     @BindView(R.id.tv_draw_code)
     TextView tv_draw_code;
+    @BindView(R.id.tv_draw)
+    TextView tv_draw;
+    @BindView(R.id.tv_time)
+    TextView tv_time;
 
     @BindView(R.id.btn_ok)
     Button btnOk;
@@ -100,6 +106,8 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     Button btnCapture;
     @BindView(R.id.btn_reject)
     Button btnReject;
+    @BindView(R.id.rl_keno)
+    RelativeLayout rl_keno;
 
     @BindView(R.id.recycle)
     RecyclerView recycle;
@@ -128,7 +136,6 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     long SymbolNumber = Constants.SymbolNumber;
 
     boolean IsPrint = false;
-    boolean IsExpires = false;
     String ticketType = Constants.TICKET_NO_AMOUNT;
     boolean IsBefore = true;
     OrderModel mOrderModel;
@@ -140,7 +147,8 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     EmployeeModel employeeModel;
     boolean IsKenoPlus = false;
     SharedPref sharedPref;
-
+    CountDownTimer cdt;
+    int diffPrintSecond = 0;
 
     public static DetailFragment getInstance() {
         return new DetailFragment();
@@ -159,7 +167,6 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
         mLineModels = new ArrayList<>();
         mDrawModels = new ArrayList<>();
 
-        IsExpires = false;
         SharedPref sharedPref = new SharedPref(getActivity());
         deviceBluetooth = sharedPref.getString(Constants.BLUETOOTH_NAME, "");
         employeeModel = sharedPref.getEmployeeModel();
@@ -174,7 +181,6 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
 
         if (mPresenter != null) {
             mOrderModel = mPresenter.getOrderModel();
-            mDrawModels = mPresenter.getDrawModels();
 
             switch (mOrderModel.getProductID()) {
                 case Constants.PRODUCT_MEGA:
@@ -213,10 +219,12 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
             tv_quantity.setText(String.valueOf(mOrderModel.getQuantity()));
             tvTitle.setText("In vé #" + mOrderModel.getOrderCode());
 
+            rl_keno.setVisibility(View.GONE);
             if (mOrderModel.getProductID() == Constants.PRODUCT_KENO || mOrderModel.getProductID() == Constants.PRODUCT_MAX3D) {
                 ll_image_after.setVisibility(View.GONE);
                 if (mOrderModel.getProductID() == Constants.PRODUCT_KENO) {
                     btnReject.setEnabled(false);
+                    rl_keno.setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -229,11 +237,12 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
         IsKenoPlus = false;
 
         if (orderModels.get(0).getProductID() == Constants.PRODUCT_KENO) {
-
+            mDrawModels = mPresenter.getDrawModels();
+            findCurrentDraw();
             if (orderModels.get(0).getItemType() == 2) {
                 IsKenoPlus = true;
                 systematic = "Chẵn lẻ - Lớn nhỏ";
-            }else{
+            } else {
                 systematic = "Bậc " + orderModels.get(0).getSystemA();
             }
         } else if (orderModels.get(0).getProductID() == Constants.PRODUCT_MAX3D_PRO) {
@@ -252,9 +261,9 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
 
         String drawCode = "";
         if (orderModels.size() > 1) {
-            drawCode = "#" + orderModels.get(0).getDrawCode() + " - " + "#" + orderModels.get(orderModels.size() - 1).getDrawCode() + "/" + mOrderModel.getPrice();
+            drawCode = "#" + orderModels.get(0).getDrawCode() + " - " + "#" + orderModels.get(orderModels.size() - 1).getDrawCode() + "/" + NumberUtils.formatPriceNumber(mOrderModel.getPrice());
         } else
-            drawCode = "#" + orderModels.get(0).getDrawCode()+ "/" + mOrderModel.getPrice();
+            drawCode = "#" + orderModels.get(0).getDrawCode() + "/" + NumberUtils.formatPriceNumber(mOrderModel.getPrice());
         tv_draw_code.setText(drawCode);
 
         if (mOrderModel.getTicketCategory() == 2) {
@@ -408,7 +417,7 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     public void OnClick(View view) {
         switch (view.getId()) {
             case R.id.btn_print:
-                mPresenter.print(mItemModels);
+                printTicket();
                 break;
             case R.id.btn_capture:
             case R.id.image_before:
@@ -441,6 +450,35 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
                 reject();
                 break;
         }
+    }
+
+    private void printTicket() {
+        if (mOrderModel.getProductID() == Constants.PRODUCT_KENO) {
+            DrawModel currentDrawModel = null;
+            for (DrawModel drawModel : mDrawModels) {
+                if (drawModel.getDrawCode().equals(mItemModels.get(0).getDrawCode())) {
+                    currentDrawModel = drawModel;
+                    break;
+                }
+            }
+            if (currentDrawModel == null) {
+                Toast.showToast(getViewContext(), "Đơn hàng hết thời gian mở bán");
+                return;
+            }
+
+            Date drawDateTime = DateTimeUtils.convertStringToDateDefault(currentDrawModel.getDrawDate() + " " + currentDrawModel.getDrawTime());
+            Date serverTime = TimeService.date;
+
+            if (DateTimeUtils.compareToDay(serverTime, DateUtils.addMinutes(DateUtils.addSeconds(drawDateTime, diffPrintSecond), -10)) < 0) {
+                Toast.showToast(getViewContext(), "Đơn hàng chưa đến thời gian mở bán");
+                return;
+            }
+            if (DateTimeUtils.compareToDay(serverTime, DateUtils.addSeconds(drawDateTime, -diffPrintSecond)) > 0) {
+                Toast.showToast(getViewContext(), "Đơn hàng hết thời gian mở bán");
+                return;
+            }
+        }
+        mPresenter.print(mItemModels);
     }
 
     private void reject() {
@@ -591,7 +629,7 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
             }
         }
         processFragDialog.dismiss();
-        if (mOrderModel.getProductID() == Constants.PRODUCT_KENO) {// || mItemModels.size() == 1) {
+        if (mOrderModel.getProductID() == Constants.PRODUCT_KENO || (mItemModels.size() == 1 && mOrderModel.getProductID() == Constants.PRODUCT_MAX3D)) {
             capturePermission(false);
         }
 //        else {
@@ -732,8 +770,8 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
                 .request();
     }
 
-    private void findCurrentDraw(){
-        Date serverTime = DateTimeUtils.convertStringToDateDefault(sharedPref.getString(Constants.KEY_DATE_TIME_NOW, ""));
+    private void findCurrentDraw() {
+        Date serverTime = TimeService.date;
         Date drawDateTime = null;
 
         DrawModel currentDrawModel = null;
@@ -742,39 +780,50 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
 
             if (DateTimeUtils.compareToDay(serverTime, drawDateTime) < 0
                     && DateTimeUtils.compareToDay(DateUtils.addMinutes(serverTime, 10), drawDateTime) >= 0) {
-                currentDrawModel = drawModel;
+                if (drawModel.getDrawCode().equals(mItemModels.get(0).getDrawCode())) {
+                    currentDrawModel = drawModel;
+                }
                 break;
             }
         }
 
-        if(currentDrawModel != null) {
-            int diffPrintSecond = Integer.parseInt(sharedPref.getString(Constants.KEY_DIFF_PRINT_SECOND, ""));
+        if (currentDrawModel != null) {
+            diffPrintSecond = Integer.parseInt(sharedPref.getString(Constants.KEY_DIFF_PRINT_SECOND, ""));
             assert drawDateTime != null;
             Date fromPrintTime = DateUtils.addSeconds(DateUtils.addMinutes(drawDateTime, -10), diffPrintSecond);
-            Date toPrintTime = DateUtils.addSeconds(drawDateTime, diffPrintSecond);
+            Date toPrintTime = DateUtils.addSeconds(drawDateTime, -diffPrintSecond);
             String printTime = DateTimeUtils.convertDateToString(fromPrintTime, DateTimeUtils.SIMPLE_TIME_FORMAT) + " - " + DateTimeUtils.convertDateToString(toPrintTime, DateTimeUtils.SIMPLE_TIME_FORMAT);
-
+            tv_draw.setText("#" + currentDrawModel.getDrawCode());
+            tv_time.setText(printTime);
             long diff = drawDateTime.getTime() - serverTime.getTime();
             CountdownKeno(diff);
         }
     }
 
     private void CountdownKeno(long diff) {
-        CountDownTimer cdt = new CountDownTimer(diff, 1000) {
+        cdt = new CountDownTimer(diff, 1000) {
             @SuppressLint("SetTextI18n")
             @Override
             public void onTick(long millisUntilFinished) {
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
                 millisUntilFinished -= TimeUnit.MINUTES.toMillis(minutes);
                 long seconds = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished);
+                btnPrint.setText("IN VÉ " + StringUtils.leftPad(String.valueOf(minutes), 2, '0') + ":" + StringUtils.leftPad(String.valueOf(seconds), 2, '0'));
             }
 
             @Override
             public void onFinish() {
                 cancel();
-                IsExpires = true;
             }
         };
         cdt.start();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (cdt != null)
+            cdt.cancel();
     }
 }

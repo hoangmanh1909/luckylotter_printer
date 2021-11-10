@@ -27,6 +27,7 @@ import com.mbl.lucklotterprinter.model.DrawModel;
 import com.mbl.lucklotterprinter.model.OrderModel;
 import com.mbl.lucklotterprinter.model.ProductModel;
 import com.mbl.lucklotterprinter.printer.detail.DetailPresenter;
+import com.mbl.lucklotterprinter.service.TimeService;
 import com.mbl.lucklotterprinter.utils.Constants;
 import com.mbl.lucklotterprinter.utils.DateTimeUtils;
 import com.mbl.lucklotterprinter.utils.SharedPref;
@@ -68,13 +69,14 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
     TextView tv_countdown;
 
     @BindView(R.id.ll_keno)
-            LinearLayout ll_keno;
+    LinearLayout ll_keno;
 
     PrinterAdapter mAdapter;
     List<OrderModel> mOrderModels;
     boolean IsPrint = true;
     List<DrawModel> mDrawModels;
     SharedPref sharedPref;
+    CountDownTimer cdt;
 
     int productID;
 
@@ -104,7 +106,7 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
 
                 holder.itemView.setOnClickListener(v -> {
                     if (IsPrint)
-                        new DetailPresenter((ContainerView) getBaseActivity(), mOrderModels.get(position),mDrawModels).pushView();
+                        new DetailPresenter((ContainerView) getBaseActivity(), mOrderModels.get(position), mDrawModels).pushView();
                     else
                         Toast.showToast(requireContext(), "Đã hết thời gian in vé");
                 });
@@ -156,15 +158,15 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
     @SuppressLint("SetTextI18n")
     @Override
     public void showKenoDraw(List<DrawModel> drawModels) {
-        if(drawModels.size() > 0) {
+        if (drawModels.size() > 0) {
             mDrawModels.clear();
             mDrawModels.addAll(drawModels);
             findCurrentDraw();
         }
     }
 
-    private void findCurrentDraw(){
-        Date serverTime = DateTimeUtils.convertStringToDateDefault(sharedPref.getString(Constants.KEY_DATE_TIME_NOW, ""));
+    private void findCurrentDraw() {
+        Date serverTime = TimeService.date;
         Date drawDateTime = null;
 
         DrawModel currentDrawModel = null;
@@ -178,11 +180,11 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
             }
         }
 
-        if(currentDrawModel != null) {
+        if (currentDrawModel != null) {
             int diffPrintSecond = Integer.parseInt(sharedPref.getString(Constants.KEY_DIFF_PRINT_SECOND, ""));
             assert drawDateTime != null;
             Date fromPrintTime = DateUtils.addSeconds(DateUtils.addMinutes(drawDateTime, -10), diffPrintSecond);
-            Date toPrintTime = DateUtils.addSeconds(drawDateTime, diffPrintSecond);
+            Date toPrintTime = DateUtils.addSeconds(drawDateTime, -diffPrintSecond);
             String printTime = DateTimeUtils.convertDateToString(fromPrintTime, DateTimeUtils.SIMPLE_TIME_FORMAT) + " - " + DateTimeUtils.convertDateToString(toPrintTime, DateTimeUtils.SIMPLE_TIME_FORMAT);
 
             tv_draw.setText("#" + currentDrawModel.getDrawCode());
@@ -190,14 +192,14 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
 
             long diff = drawDateTime.getTime() - serverTime.getTime();
             CountdownKeno(diff);
-        }else{
+        } else {
             tv_draw.setText("#");
             tv_time.setText("Hết thời gian in vé");
         }
     }
 
     private void CountdownKeno(long diff) {
-        CountDownTimer cdt = new CountDownTimer(diff, 1000) {
+        cdt = new CountDownTimer(diff, 1000) {
             @SuppressLint("SetTextI18n")
             @Override
             public void onTick(long millisUntilFinished) {
@@ -214,6 +216,14 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
             }
         };
         cdt.start();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (cdt != null)
+            cdt.cancel();
     }
 
     @Override
