@@ -36,7 +36,7 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
     OrderModel orderModel;
     List<DrawModel> drawModels;
 
-    public DetailPresenter(ContainerView containerView, OrderModel orderModel,List<DrawModel> drawModels) {
+    public DetailPresenter(ContainerView containerView, OrderModel orderModel, List<DrawModel> drawModels) {
         super(containerView);
 
         this.orderModel = orderModel;
@@ -79,8 +79,7 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
     @Override
     public void print(List<ItemModel> models) {
         mView.showProgress();
-//        List<ItemModel> itemModels = new ArrayList<>();
-//        ItemModel item1 = models.get(0);
+        List<ItemModel> itemModels = new ArrayList<>();
 //
 //        if (item1.getItemType() == 2 && item1.getProductID() == Constants.PRODUCT_KENO) {
 //            for (ItemModel itemModel : models) {
@@ -137,62 +136,62 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
 //                itemModels.add(item);
 //            }
 //        } else {
-//            for (ItemModel itemModel : models) {
-//                ItemModel item = new ItemModel();
-//
-//                item.setSystemTypeA(itemModel.getSystemTypeA());
-//                item.setSystemTypeB(itemModel.getSystemTypeB());
-//                item.setSystemTypeC(itemModel.getSystemTypeC());
-//                item.setSystemTypeD(itemModel.getSystemTypeD());
-//                item.setSystemTypeE(itemModel.getSystemTypeE());
-//                item.setSystemTypeF(itemModel.getSystemTypeF());
-//                item.setProductID(itemModel.getProductID());
-//                item.setProductName(itemModel.getProductName());
-//                item.setSystemA(itemModel.getSystemA());
-//                item.setSystemB(itemModel.getSystemB());
-//                item.setSystemC(itemModel.getSystemC());
-//                item.setSystemD(itemModel.getSystemD());
-//                item.setSystemE(itemModel.getSystemE());
-//                item.setSystemF(itemModel.getSystemF());
-//                item.setStatus(itemModel.getStatus());
-//                item.setReasonReject(itemModel.getReasonReject());
-//                item.setReasonError(itemModel.getReasonError());
-//                item.setPrintCode(itemModel.getPrintCode());
-//                item.setPidNumber(itemModel.getPidNumber());
-//                item.setOrderItemID(itemModel.getOrderItemID());
-//                item.setMobileNumber(item.getMobileNumber());
-//                item.setFullName(itemModel.getFullName());
-//                item.setEmailAddress(itemModel.getEmailAddress());
-//                item.setDrawDate(itemModel.getDrawDate());
-//                item.setDrawCode(itemModel.getDrawCode());
-//                item.setImgBefore(itemModel.getImgBefore());
-//                item.setImgAfter(itemModel.getImgAfter());
-//                item.setPriceA(itemModel.getPriceA());
-//                item.setPriceB(itemModel.getPriceB());
-//                item.setPriceC(itemModel.getPriceC());
-//                item.setPriceD(itemModel.getPriceC());
-//                item.setPriceE(itemModel.getPriceE());
-//                item.setPriceF(itemModel.getPriceF());
-//                item.setPrice(itemModel.getPrice());
-//                item.setItemType(itemModel.getItemType());
-//
-//                if (!TextUtils.isEmpty(itemModel.getLineA()))
-//                    item.setLineA(itemModel.getLineA().replaceAll(",", "-"));
-//                if (!TextUtils.isEmpty(itemModel.getLineB()))
-//                    item.setLineB(itemModel.getLineB().replaceAll(",", "-"));
-//                if (!TextUtils.isEmpty(itemModel.getLineC()))
-//                    item.setLineC(itemModel.getLineC().replaceAll(",", "-"));
-//                if (!TextUtils.isEmpty(itemModel.getLineD()))
-//                    item.setLineD(itemModel.getLineD().replaceAll(",", "-"));
-//                if (!TextUtils.isEmpty(itemModel.getLineE()))
-//                    item.setLineE(itemModel.getLineE().replaceAll(",", "-"));
-//                if (!TextUtils.isEmpty(itemModel.getLineF()))
-//                    item.setLineF(itemModel.getLineF().replaceAll(",", "-"));
-//
-//                itemModels.add(item);
+        for (ItemModel itemModel : models) {
+            ItemModel item = new ItemModel();
+
+            item.setSystemTypeA(itemModel.getSystemTypeA());
+            item.setSystemTypeB(itemModel.getSystemTypeB());
+            item.setSystemTypeC(itemModel.getSystemTypeC());
+            item.setSystemTypeD(itemModel.getSystemTypeD());
+            item.setSystemTypeE(itemModel.getSystemTypeE());
+            item.setSystemTypeF(itemModel.getSystemTypeF());
+            item.setProductID(itemModel.getProductID());
+            item.setProductName(itemModel.getProductName());
+            item.setSystemA(itemModel.getSystemA());
+            item.setSystemB(itemModel.getSystemB());
+            item.setSystemC(itemModel.getSystemC());
+            item.setSystemD(itemModel.getSystemD());
+            item.setSystemE(itemModel.getSystemE());
+            item.setSystemF(itemModel.getSystemF());
+            item.setStatus(itemModel.getStatus());
+            item.setReasonReject(itemModel.getReasonReject());
+            item.setReasonError(itemModel.getReasonError());
+            item.setPrintCode(itemModel.getPrintCode());
+            item.setPidNumber(itemModel.getPidNumber());
+            item.setOrderItemID(itemModel.getOrderItemID());
+            item.setMobileNumber(itemModel.getMobileNumber());
+            item.setFullName(itemModel.getFullName());
+            item.setEmailAddress(itemModel.getEmailAddress());
+            item.setDrawDate(itemModel.getDrawDate());
+            item.setDrawCode(itemModel.getDrawCode());
+            item.setImgBefore(itemModel.getImgBefore());
+            item.setImgAfter(itemModel.getImgAfter());
+            item.setPriceA(itemModel.getPriceA());
+            item.setPriceB(itemModel.getPriceB());
+            item.setPriceC(itemModel.getPriceC());
+            item.setPriceD(itemModel.getPriceC());
+            item.setPriceE(itemModel.getPriceE());
+            item.setPriceF(itemModel.getPriceF());
+            item.setPrice(itemModel.getPrice());
+            item.setItemType(itemModel.getItemType());
+
+            if (!TextUtils.isEmpty(itemModel.getLineA()))
+                item.setLineA(itemModel.getLineA().replaceAll(",", "-"));
+            if (!TextUtils.isEmpty(itemModel.getLineB()))
+                item.setLineB(itemModel.getLineB().replaceAll(",", "-"));
+            if (!TextUtils.isEmpty(itemModel.getLineC()))
+                item.setLineC(itemModel.getLineC().replaceAll(",", "-"));
+            if (!TextUtils.isEmpty(itemModel.getLineD()))
+                item.setLineD(itemModel.getLineD().replaceAll(",", "-"));
+            if (!TextUtils.isEmpty(itemModel.getLineE()))
+                item.setLineE(itemModel.getLineE().replaceAll(",", "-"));
+            if (!TextUtils.isEmpty(itemModel.getLineF()))
+                item.setLineF(itemModel.getLineF().replaceAll(",", "-"));
+
+            itemModels.add(item);
 //            }
-//        }
-        mInteractor.print(models, new CommonCallback<PrintResponse>((Activity) mContainerView) {
+        }
+        mInteractor.print(itemModels, new CommonCallback<PrintResponse>((Activity) mContainerView) {
             @Override
             protected void onSuccess(Call<PrintResponse> call, Response<PrintResponse> response) {
                 super.onSuccess(call, response);

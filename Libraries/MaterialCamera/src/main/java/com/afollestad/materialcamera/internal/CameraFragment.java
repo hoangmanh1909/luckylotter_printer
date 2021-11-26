@@ -18,7 +18,9 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+
 import androidx.core.content.ContextCompat;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -32,6 +34,7 @@ import com.afollestad.materialcamera.util.ImageUtil;
 import com.afollestad.materialcamera.util.ManufacturerUtil;
 
 import java.io.File;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -125,26 +128,27 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.rootFrame) {
-            if (mCamera == null || mIsAutoFocusing) return;
-            try {
-                mIsAutoFocusing = true;
-                mCamera.cancelAutoFocus();
-                mCamera.autoFocus(
-                        new Camera.AutoFocusCallback() {
-                            @Override
-                            public void onAutoFocus(boolean success, Camera camera) {
-                                mIsAutoFocusing = false;
-                                if (!success)
-                                    Toast.makeText(getActivity(), "Unable to auto-focus!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-        } else {
-            super.onClick(view);
-        }
+        super.onClick(view);
+//        if (view.getId() == R.id.rootFrame) {
+//            if (mCamera == null || mIsAutoFocusing) return;
+//            try {
+//                mIsAutoFocusing = true;
+//                mCamera.cancelAutoFocus();
+//                mCamera.autoFocus(
+//                        new Camera.AutoFocusCallback() {
+//                            @Override
+//                            public void onAutoFocus(boolean success, Camera camera) {
+//                                mIsAutoFocusing = false;
+//                                if (!success)
+//                                    Toast.makeText(getActivity(), "Unable to auto-focus!", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//            } catch (Throwable t) {
+//                t.printStackTrace();
+//            }
+//        } else {
+//            super.onClick(view);
+//        }
     }
 
     @Override
@@ -240,7 +244,10 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             parameters.setPictureSize(mStillShotSize.width, mStillShotSize.height);
 
             setCameraDisplayOrientation(parameters);
+
             mCamera.setParameters(parameters);
+
+            setAutoFocusMode(mCamera);
 
             // NOTE: onFlashModesLoaded should not be called while modifying camera parameters as
             //       the flash parameters set in setupFlashMode will then be overwritten
@@ -251,6 +258,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             createPreview();
             mMediaRecorder = new MediaRecorder();
 
+
             onCameraOpened();
         } catch (IllegalStateException e) {
             throwError(new Exception("Cannot access the camera.", e));
@@ -259,6 +267,22 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                     new Exception("Cannot access the camera, you may need to restart your device.", e2));
         }
     }
+    public void setAutoFocusMode(Camera camera) {
+        try {
+            Camera.Parameters parameters = camera.getParameters();
+            List<String> focusModes = parameters.getSupportedFocusModes();
+            if (focusModes.size() > 0 && focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                camera.setParameters(parameters);
+            } else if (focusModes.size() > 0) {
+                parameters.setFocusMode(focusModes.get(0));
+                camera.setParameters(parameters);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private Camera.Size getHighestSupportedStillShotSize(List<Camera.Size> supportedPictureSizes) {
         Collections.sort(

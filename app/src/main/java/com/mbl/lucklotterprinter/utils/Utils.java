@@ -184,7 +184,7 @@ public class Utils {
                 name = "Max 3D";
                 break;
             case Constants.PRODUCT_MAX3D_PLUS:
-                name = "Max 3D Cộng";
+                name = "Max 3D+";
                 break;
             case Constants.PRODUCT_MAX3D_PRO:
                 name = "Max 3D Pro";

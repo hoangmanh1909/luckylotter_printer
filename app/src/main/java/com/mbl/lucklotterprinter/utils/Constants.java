@@ -36,11 +36,11 @@ public class Constants {
     public static final int PRODUCT_MAX3D_PRO = 13;
 
     //x,1,l,y,m,M,<,u,k,N,q,t,d,F,i,Z
-    //x,Z,l,y,m,M,<,u,k,N,q,t,d,F
+    //x,Z,l,y,m,M,<,u,k,N,q,t,d,F,i,Z
     public static final List<String> POSKeyArray = Arrays.asList("x", "Z", "l", "y", "m", "M", "<", "u", "k", "N", "q", "t", "d", "F", "i", "Z");
-    public static final long SymbolSpecial = 1250;
-    public static final long SymbolBase = 300;
-    public static final long SymbolNumber = 150;
+    public static final long SymbolSpecial = 750;// 1250;
+    public static final long SymbolBase = 180;// 300;
+    public static final long SymbolNumber = 180;//150;
 
     public static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
 }

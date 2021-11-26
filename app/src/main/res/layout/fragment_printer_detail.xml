@@ -162,6 +162,7 @@
                             <TextView
                                 android:id="@+id/tv_pid_number"
                                 style="@style/TextView"
+                                android:textColor="@color/colorPrimary"
                                 android:layout_alignParentEnd="true"
                                 android:text="123456"
                                 android:textStyle="bold" />
@@ -352,7 +353,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:layout_margin="@dimen/_6sdp"
                 android:orientation="horizontal">
 
@@ -368,23 +368,15 @@
                     android:textSize="@dimen/_11sdp" />
 
                 <Button
-                    android:id="@+id/btn_capture"
+                    android:id="@+id/btn_printed"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/_6sdp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_button_disable_state"
-                    android:enabled="false"
-                    android:text="Chụp ảnh"
+                    android:text="Đã in vé"
                     android:textSize="@dimen/_11sdp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_6sdp"
-                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btn_reject"
@@ -394,6 +386,26 @@
                     android:layout_weight="1"
                     android:background="@drawable/bg_button_disable_state"
                     android:text="Hết bộ số"
+                    android:textSize="@dimen/_11sdp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_6sdp"
+                android:orientation="horizontal">
+
+
+
+                <Button
+                    android:id="@+id/btn_capture"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_button_disable_state"
+                    android:enabled="false"
+                    android:text="Chụp ảnh"
                     android:textSize="@dimen/_11sdp" />
 
                 <Button

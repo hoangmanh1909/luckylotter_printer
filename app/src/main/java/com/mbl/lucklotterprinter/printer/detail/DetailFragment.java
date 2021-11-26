@@ -108,6 +108,8 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     Button btnReject;
     @BindView(R.id.rl_keno)
     RelativeLayout rl_keno;
+    @BindView(R.id.btn_printed)
+    Button btnPrinted;
 
     @BindView(R.id.recycle)
     RecyclerView recycle;
@@ -225,6 +227,7 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
                 if (mOrderModel.getProductID() == Constants.PRODUCT_KENO) {
                     btnReject.setEnabled(false);
                     rl_keno.setVisibility(View.VISIBLE);
+                    btnPrinted.setVisibility(View.GONE);
                 }
             }
         }
@@ -413,11 +416,15 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
         }
     }
 
-    @OnClick({R.id.btn_print, R.id.btn_capture, R.id.btn_ok, R.id.image_before, R.id.image_after, R.id.iv_back, R.id.btn_reject})
+    @OnClick({R.id.btn_print, R.id.btn_capture, R.id.btn_ok, R.id.image_before, R.id.image_after, R.id.iv_back, R.id.btn_reject, R.id.btn_printed})
     public void OnClick(View view) {
         switch (view.getId()) {
             case R.id.btn_print:
                 printTicket();
+                btnPrinted.setEnabled(false);
+                break;
+            case R.id.btn_printed:
+                printed();
                 break;
             case R.id.btn_capture:
             case R.id.image_before:
@@ -479,6 +486,23 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
             }
         }
         mPresenter.print(mItemModels);
+    }
+
+    private void printed() {
+        btnPrint.setEnabled(false);
+        btnReject.setEnabled(false);
+        IsPrint = true;
+        btnPrint.setEnabled(false);
+        if (mItemModels.size() == 1 || mOrderModel.getProductID() == Constants.PRODUCT_KENO) {
+            btnCapture.setEnabled(true);
+        }
+
+        btnReject.setEnabled(false);
+        if (mItemModels.size() > 0)
+            btnOk.setEnabled(true);
+        if (mOrderModel.getProductID() == Constants.PRODUCT_KENO || (mItemModels.size() == 1 && mOrderModel.getProductID() == Constants.PRODUCT_MAX3D)) {
+            capturePermission(false);
+        }
     }
 
     private void reject() {
