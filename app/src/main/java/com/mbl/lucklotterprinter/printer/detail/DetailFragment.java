@@ -227,7 +227,7 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
                 if (mOrderModel.getProductID() == Constants.PRODUCT_KENO) {
                     btnReject.setEnabled(false);
                     rl_keno.setVisibility(View.VISIBLE);
-                    btnPrinted.setVisibility(View.GONE);
+//                    btnPrinted.setVisibility(View.GONE);
                 }
             }
         }
@@ -489,6 +489,33 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     }
 
     private void printed() {
+        if(mOrderModel.getProductID() == Constants.PRODUCT_KENO){
+            if (mOrderModel.getProductID() == Constants.PRODUCT_KENO) {
+                DrawModel currentDrawModel = null;
+                for (DrawModel drawModel : mDrawModels) {
+                    if (drawModel.getDrawCode().equals(mItemModels.get(0).getDrawCode())) {
+                        currentDrawModel = drawModel;
+                        break;
+                    }
+                }
+                if (currentDrawModel == null) {
+                    Toast.showToast(getViewContext(), "Đơn hàng hết thời gian mở bán");
+                    return;
+                }
+
+                Date drawDateTime = DateTimeUtils.convertStringToDateDefault(currentDrawModel.getDrawDate() + " " + currentDrawModel.getDrawTime());
+                Date serverTime = TimeService.date;
+
+                if (DateTimeUtils.compareToDay(serverTime, DateUtils.addMinutes(DateUtils.addSeconds(drawDateTime, diffPrintSecond), -10)) < 0) {
+                    Toast.showToast(getViewContext(), "Đơn hàng chưa đến thời gian mở bán");
+                    return;
+                }
+                if (DateTimeUtils.compareToDay(serverTime, DateUtils.addSeconds(drawDateTime, -diffPrintSecond)) > 0) {
+                    Toast.showToast(getViewContext(), "Đơn hàng hết thời gian mở bán");
+                    return;
+                }
+            }
+        }
         btnPrint.setEnabled(false);
         btnReject.setEnabled(false);
         IsPrint = true;

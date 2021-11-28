@@ -352,7 +352,7 @@ public class UploadFragment extends ViewFragment<UploadContract.Presenter> imple
         File file = new File(path_media);
         Uri picUri = Uri.fromFile(new File(path_media));
 
-        adapter.notifyDataSetChanged();
+//        adapter.notifyDataSetChanged();
 
         Observable.fromCallable(() -> {
             Uri uri = Uri.fromFile(new File(path_media));
@@ -387,9 +387,9 @@ public class UploadFragment extends ViewFragment<UploadContract.Presenter> imple
                         ((ItemModel) adapter.getItem(mPosition)).setImgAfter(path);
                     adapter.notifyDataSetChanged();
 
-                    mPresenter.postImage(path, type);
-                    if (file.exists())
-                        file.delete();
+//                    mPresenter.postImage(path, type);
+//                    if (file.exists())
+//                        file.delete();
                 },
                 onError -> Logger.e("error save image")
         );
