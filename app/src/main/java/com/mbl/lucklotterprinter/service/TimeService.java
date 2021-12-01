@@ -3,6 +3,7 @@ package com.mbl.lucklotterprinter.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -12,6 +13,7 @@ import com.mbl.lucklotterprinter.utils.Utils;
 
 import org.apache.commons.lang3.time.DateUtils;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,16 +33,19 @@ public class TimeService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         // The service is starting, due to a call to startService()
         String strDateTimeNow = intent.getStringExtra(Constants.KEY_DATE_TIME_NOW);
-        Date date = DateTimeUtils.convertStringToDate(strDateTimeNow, "");
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                dateTimer = DateUtils.addSeconds(date, 1);
+        dateTimer = DateTimeUtils.convertStringToDateDefault(strDateTimeNow);
+
+        try {
+            while (true) {
+                try {
+                    dateTimer = DateUtils.addSeconds(dateTimer, 1);
+                    //Log.d("Timer",DateTimeUtils.convertDateToString(dateTimer,""));
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-        };
-        long delay = 1000L;
-        Timer timer = new Timer("Timer");
-        timer.schedule(timerTask, 0, delay);
+        }catch (Exception e){}
 
         return startMode;
     }

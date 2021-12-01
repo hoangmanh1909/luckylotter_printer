@@ -67,13 +67,11 @@ public class HomePresenter extends Presenter<HomeContract.View, HomeContract.Int
 
                 if ("00".equals(response.body().getErrorCode())) {
                     sharedPref.putString(Constants.KEY_DATE_TIME_NOW, String.valueOf(response.body().getValue()));
-                    Log.e("TimeSever", String.valueOf(response.body().getValue()));
+                    //Log.e("TimeSever", String.valueOf(response.body().getValue()));
                     TimeService timeService = new TimeService();
                     Intent intent = activity.getIntent();
-                    intent.putExtra(Constants.KEY_DATE_TIME_NOW,"");
+                    intent.putExtra(Constants.KEY_DATE_TIME_NOW,String.valueOf(response.body().getValue()));
                     timeService.onStartCommand(intent, 0, 0);
-//                    Intent intent = new Intent(getViewContext(), TimeService.class);
-//                    activity.startActivity(intent);
                 }
             }
 
