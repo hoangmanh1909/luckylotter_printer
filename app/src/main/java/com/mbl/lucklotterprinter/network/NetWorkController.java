@@ -124,13 +124,18 @@ public class NetWorkController {
         call.enqueue(callback);
     }
 
-    public static void getResult(String date,int productID, CommonCallback<DrawResponse> callback) {
-        Call<DrawResponse> call = getAPIBuilder().getResult(date,productID);
+    public static void getResult(String date, int productID, CommonCallback<DrawResponse> callback) {
+        Call<DrawResponse> call = getAPIBuilder().getResult(date, productID);
         call.enqueue(callback);
     }
 
     public static void getAllConfig(CommonCallback<ParamsResponse> callback) {
         Call<ParamsResponse> call = getAPIBuilder().getAllConfig();
+        call.enqueue(callback);
+    }
+
+    public static void countOrderWattingPrint(int productID, int POSID, CommonCallback<BaseResponse> callback) {
+        Call<BaseResponse> call = getAPIBuilder().countOrderWattingPrint(productID, POSID);
         call.enqueue(callback);
     }
 }

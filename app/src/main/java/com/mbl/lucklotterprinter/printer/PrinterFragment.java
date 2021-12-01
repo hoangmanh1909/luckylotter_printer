@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -43,6 +44,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -67,6 +70,8 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
     TextView tv_time;
     @BindView(R.id.tv_countdown)
     TextView tv_countdown;
+    @BindView(R.id.tv_count_wait_print)
+    TextView tv_count_wait_print;
 
     @BindView(R.id.ll_keno)
     LinearLayout ll_keno;
@@ -77,7 +82,7 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
     List<DrawModel> mDrawModels;
     SharedPref sharedPref;
     CountDownTimer cdt;
-
+    TimerTask timerTask;
     int productID;
 
     public static PrinterFragment getInstance() {
@@ -122,6 +127,9 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
             iv_filter.setVisibility(View.VISIBLE);
             iv_filter.setOnClickListener(v -> pickProduct());
         } else {
+            String waitPrint = String.format(getResources().getString(R.string.wait_print_keno), "0");
+            tv_count_wait_print.setText(waitPrint);
+            countWaitPrint();
             ll_keno.setVisibility(View.VISIBLE);
             iv_filter.setVisibility(View.GONE);
         }
@@ -165,8 +173,35 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
         }
     }
 
+    private void countWaitPrint() {
+        timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (mPresenter != null)
+                    mPresenter.countOrderWattingPrint(Constants.PRODUCT_KENO);
+            }
+        };
+        long delay = 15000L;
+        Timer timer = new Timer("Timer");
+        timer.schedule(timerTask, 0, delay);
+    }
+
+    @Override
+    public void showCountWaitPrint(int value) {
+        try {
+
+            if (requireActivity() != null) {
+                @SuppressLint("StringFormatMatches") String waitPrint = String.format(getResources().getString(R.string.wait_print_keno), value);
+                tv_count_wait_print.setText(waitPrint);
+            }
+        } catch (Exception exception) {
+
+        }
+    }
+
     private void findCurrentDraw() {
-        Date serverTime = TimeService.date;
+        Date serverTime = TimeService.dateTimer;
+        Log.e("TimeService.findCurrentDraw", DateTimeUtils.convertDateToString(TimeService.dateTimer,DateTimeUtils.DEFAULT_DATETIME_FORMAT));
         Date drawDateTime = null;
 
         DrawModel currentDrawModel = null;
@@ -179,7 +214,8 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
                 break;
             }
         }
-
+        Log.e("TimeService.drawDateTime", DateTimeUtils.convertDateToString(TimeService.dateTimer,DateTimeUtils.DEFAULT_DATETIME_FORMAT));
+        Log.e("TimeService.DrawModel", currentDrawModel.getDrawTime().toString());
         if (currentDrawModel != null) {
             int diffPrintSecond = Integer.parseInt(sharedPref.getString(Constants.KEY_DIFF_PRINT_SECOND, ""));
             assert drawDateTime != null;
@@ -193,6 +229,8 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
             long diff = drawDateTime.getTime() - serverTime.getTime();
             CountdownKeno(diff);
         } else {
+            if (cdt != null)
+                cdt.cancel();
             tv_draw.setText("#");
             tv_time.setText("Hết thời gian in vé");
         }
@@ -222,6 +260,8 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
     public void onDestroy() {
         super.onDestroy();
 
+        if (timerTask != null)
+            timerTask.cancel();
         if (cdt != null)
             cdt.cancel();
     }

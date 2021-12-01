@@ -474,7 +474,7 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
             }
 
             Date drawDateTime = DateTimeUtils.convertStringToDateDefault(currentDrawModel.getDrawDate() + " " + currentDrawModel.getDrawTime());
-            Date serverTime = TimeService.date;
+            Date serverTime = TimeService.dateTimer;
 
             if (DateTimeUtils.compareToDay(serverTime, DateUtils.addMinutes(DateUtils.addSeconds(drawDateTime, diffPrintSecond), -10)) < 0) {
                 Toast.showToast(getViewContext(), "Đơn hàng chưa đến thời gian mở bán");
@@ -490,38 +490,38 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
 
     private void printed() {
         if(mOrderModel.getProductID() == Constants.PRODUCT_KENO){
-            if (mOrderModel.getProductID() == Constants.PRODUCT_KENO) {
-                DrawModel currentDrawModel = null;
-                for (DrawModel drawModel : mDrawModels) {
-                    if (drawModel.getDrawCode().equals(mItemModels.get(0).getDrawCode())) {
-                        currentDrawModel = drawModel;
-                        break;
-                    }
-                }
-                if (currentDrawModel == null) {
-                    Toast.showToast(getViewContext(), "Đơn hàng hết thời gian mở bán");
-                    return;
-                }
-
-                Date drawDateTime = DateTimeUtils.convertStringToDateDefault(currentDrawModel.getDrawDate() + " " + currentDrawModel.getDrawTime());
-                Date serverTime = TimeService.date;
-
-                if (DateTimeUtils.compareToDay(serverTime, DateUtils.addMinutes(DateUtils.addSeconds(drawDateTime, diffPrintSecond), -10)) < 0) {
-                    Toast.showToast(getViewContext(), "Đơn hàng chưa đến thời gian mở bán");
-                    return;
-                }
-                if (DateTimeUtils.compareToDay(serverTime, DateUtils.addSeconds(drawDateTime, -diffPrintSecond)) > 0) {
-                    Toast.showToast(getViewContext(), "Đơn hàng hết thời gian mở bán");
-                    return;
+            DrawModel currentDrawModel = null;
+            for (DrawModel drawModel : mDrawModels) {
+                if (drawModel.getDrawCode().equals(mItemModels.get(0).getDrawCode())) {
+                    currentDrawModel = drawModel;
+                    break;
                 }
             }
+            if (currentDrawModel == null) {
+                Toast.showToast(getViewContext(), "Đơn hàng hết thời gian mở bán");
+                return;
+            }
+
+            Date drawDateTime = DateTimeUtils.convertStringToDateDefault(currentDrawModel.getDrawDate() + " " + currentDrawModel.getDrawTime());
+            Date serverTime = TimeService.dateTimer;
+
+            if (DateTimeUtils.compareToDay(serverTime, DateUtils.addMinutes(DateUtils.addSeconds(drawDateTime, diffPrintSecond), -10)) < 0) {
+                Toast.showToast(getViewContext(), "Đơn hàng chưa đến thời gian mở bán");
+                return;
+            }
+            if (DateTimeUtils.compareToDay(serverTime, DateUtils.addSeconds(drawDateTime, -diffPrintSecond)) > 0) {
+                Toast.showToast(getViewContext(), "Đơn hàng hết thời gian mở bán");
+                return;
+            }
         }
+
         btnPrint.setEnabled(false);
         btnReject.setEnabled(false);
         IsPrint = true;
         btnPrint.setEnabled(false);
         if (mItemModels.size() == 1 || mOrderModel.getProductID() == Constants.PRODUCT_KENO) {
             btnCapture.setEnabled(true);
+
         }
 
         btnReject.setEnabled(false);
@@ -822,7 +822,7 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     }
 
     private void findCurrentDraw() {
-        Date serverTime = TimeService.date;
+        Date serverTime = TimeService.dateTimer;
         Date drawDateTime = null;
 
         DrawModel currentDrawModel = null;

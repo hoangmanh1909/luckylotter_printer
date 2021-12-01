@@ -2,6 +2,8 @@ package com.mbl.lucklotterprinter.printer;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.text.format.DateUtils;
+import android.util.Log;
 
 import com.core.base.viper.Presenter;
 import com.core.base.viper.interfaces.ContainerView;
@@ -9,10 +11,12 @@ import com.google.gson.reflect.TypeToken;
 import com.mbl.lucklotterprinter.model.EmployeeModel;
 import com.mbl.lucklotterprinter.model.OrderModel;
 import com.mbl.lucklotterprinter.model.request.SearchOrderRequest;
+import com.mbl.lucklotterprinter.model.response.BaseResponse;
 import com.mbl.lucklotterprinter.model.response.DrawResponse;
 import com.mbl.lucklotterprinter.model.response.SearchOrderResponse;
 import com.mbl.lucklotterprinter.network.CommonCallback;
 import com.mbl.lucklotterprinter.network.NetWorkController;
+import com.mbl.lucklotterprinter.service.TimeService;
 import com.mbl.lucklotterprinter.utils.Constants;
 import com.mbl.lucklotterprinter.utils.DateTimeUtils;
 import com.mbl.lucklotterprinter.utils.SharedPref;
@@ -77,6 +81,28 @@ public class PrinterPresenter extends Presenter<PrinterContract.View, PrinterCon
             protected void onError(Call<SearchOrderResponse> call, String message) {
                 super.onError(call, message);
                 mView.showOrder(new ArrayList<>());
+            }
+        });
+    }
+
+    @Override
+    public void countOrderWattingPrint(int productID) {
+        mInteractor.countOrderWattingPrint(productID,employeeModel.getPointOfSaleID(),new CommonCallback<BaseResponse>((Activity)mContainerView){
+            @Override
+            protected void onSuccess(Call<BaseResponse> call, Response<BaseResponse> response) {
+                super.onSuccess(call, response);
+
+                if ("00".equals(response.body().getErrorCode())) {
+                    int countWait = (int)Float.parseFloat(response.body().getValue().toString());
+                    Log.e("TimeService", DateTimeUtils.convertDateToString(TimeService.dateTimer,DateTimeUtils.DEFAULT_DATETIME_FORMAT));
+                    Log.e("TimeKEY_DATE_TIME_NOW", sharedPref.getString(Constants.KEY_DATE_TIME_NOW,""));
+                    mView.showCountWaitPrint(countWait);
+                }
+            }
+
+            @Override
+            protected void onError(Call<BaseResponse> call, String message) {
+                super.onError(call, message);
             }
         });
     }

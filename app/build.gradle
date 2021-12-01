@@ -12,7 +12,7 @@ android {
         minSdkVersion 26
         targetSdkVersion 30
         versionCode 4
-        versionName "3.0.3"
+        versionName "3.0.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -21,11 +21,19 @@ android {
         dev {
 //            def API_URL = '"http://172.16.132.99:2003/"'
             def API_URL = '"http://118.70.72.107:2003/"'
-//            def API_URL = '"https://app.mobilott.vn/"'
 
             def API_KEY = '"DD50AHHRY37CE42C6AAE3T27139E144D5DE9C47D6B08A6FEBFFC9A3B397AF354"'
             def IMAGE_URL = '"http://118.70.72.107:2003/Assets/Images/"'
-//            def IMAGE_URL = '"https://app.mobilott.vn/Assets/Images/"'
+
+            buildConfigField("String", "IMAGE_URL", IMAGE_URL)
+            buildConfigField("String", "API_URL", API_URL)
+            buildConfigField("String", "API_KEY", API_KEY)
+        }
+        product {
+            def API_URL = '"https://app.mobilott.vn/"'
+
+            def API_KEY = '"DD50AHHRY37CE42C6AAE3T27139E144D5DE9C47D6B08A6FEBFFC9A3B397AF354"'
+            def IMAGE_URL = '"https://app.mobilott.vn/Assets/Images/"'
 
             buildConfigField("String", "IMAGE_URL", IMAGE_URL)
             buildConfigField("String", "API_URL", API_URL)

@@ -106,9 +106,15 @@ public class ItemModel {
     @SerializedName("ImgBefore")
     @Expose
     private String imgBefore;
+    @SerializedName("ImgBeforeLocal")
+    @Expose
+    private String imgBeforeLocal;
     @SerializedName("ImgAfter")
     @Expose
     private String imgAfter;
+    @SerializedName("ImgAfterLocal")
+    @Expose
+    private String imgAfterLocal;
     @SerializedName("Status")
     @Expose
     private String status;
@@ -127,6 +133,27 @@ public class ItemModel {
     @SerializedName("ItemType")
     @Expose
     private Integer itemType;
+
+    public ItemModel() {
+        imgAfterLocal = "";
+        imgBeforeLocal = "";
+    }
+
+    public String getImgBeforeLocal() {
+        return imgBeforeLocal;
+    }
+
+    public void setImgBeforeLocal(String imgBeforeLocal) {
+        this.imgBeforeLocal = imgBeforeLocal;
+    }
+
+    public String getImgAfterLocal() {
+        return imgAfterLocal;
+    }
+
+    public void setImgAfterLocal(String imgAfterLocal) {
+        this.imgAfterLocal = imgAfterLocal;
+    }
 
     public Integer getProductID() {
         return productID;

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.core.base.viper.Presenter;
 import com.core.base.viper.interfaces.ContainerView;
@@ -14,10 +15,15 @@ import com.mbl.lucklotterprinter.network.CommonCallback;
 import com.mbl.lucklotterprinter.service.BluetoothServices;
 import com.mbl.lucklotterprinter.service.TimeService;
 import com.mbl.lucklotterprinter.utils.Constants;
+import com.mbl.lucklotterprinter.utils.DateTimeUtils;
 import com.mbl.lucklotterprinter.utils.SharedPref;
+
+import org.apache.commons.lang3.time.DateUtils;
 
 import java.sql.Time;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -38,11 +44,22 @@ public class HomePresenter extends Presenter<HomeContract.View, HomeContract.Int
         sharedPref = new SharedPref(activity);
 
         getParams();
-        getDateTimeNow();
+        threadGetDateTimeNow();
+    }
+
+    private void threadGetDateTimeNow(){
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                getDateTimeNow();
+            }
+        };
+        long delay = 60 * 1000L;
+        Timer timer = new Timer("TimerGetDateTimeNow");
+        timer.schedule(timerTask, 0, delay);
     }
 
     private void getDateTimeNow(){
-        mView.showProgress();
         mInteractor.getDateTimeNow(new CommonCallback<BaseResponse>(activity) {
             @Override
             protected void onSuccess(Call<BaseResponse> call, Response<BaseResponse> response) {
@@ -50,7 +67,7 @@ public class HomePresenter extends Presenter<HomeContract.View, HomeContract.Int
 
                 if ("00".equals(response.body().getErrorCode())) {
                     sharedPref.putString(Constants.KEY_DATE_TIME_NOW, String.valueOf(response.body().getValue()));
-
+                    Log.e("TimeSever", String.valueOf(response.body().getValue()));
                     TimeService timeService = new TimeService();
                     Intent intent = activity.getIntent();
                     intent.putExtra(Constants.KEY_DATE_TIME_NOW,"");

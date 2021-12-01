@@ -171,12 +171,23 @@ public class UploadFragment extends ViewFragment<UploadContract.Presenter> imple
     }
 
     void ok() {
-        int totalImage = 0;
-        if (mOrderModel.getProductID() == Constants.PRODUCT_MAX3D)
-            totalImage = itemModelList.size();
-        else
-            totalImage = itemModelList.size() * 2;
-        if (mCountImage == totalImage) {
+        boolean IsCheckImage = true;
+        if (mOrderModel.getProductID() == Constants.PRODUCT_MAX3D) {
+            for (ItemModel itemModel : itemModelList) {
+                if (TextUtils.isEmpty(itemModel.getImgBefore())) {
+                    IsCheckImage = false;
+                    break;
+                }
+            }
+        } else {
+            for (ItemModel itemModel : itemModelList) {
+                if (TextUtils.isEmpty(itemModel.getImgBefore()) || TextUtils.isEmpty(itemModel.getImgAfter())) {
+                    IsCheckImage = false;
+                    break;
+                }
+            }
+        }
+        if (IsCheckImage) {
             mPresenter.changeToImage(mOrderModel.getOrderCode());
         } else {
             Toast.showToast(getViewContext(), "Bạn chưa cập nhật đủ ảnh!");
@@ -352,8 +363,6 @@ public class UploadFragment extends ViewFragment<UploadContract.Presenter> imple
         File file = new File(path_media);
         Uri picUri = Uri.fromFile(new File(path_media));
 
-//        adapter.notifyDataSetChanged();
-
         Observable.fromCallable(() -> {
             Uri uri = Uri.fromFile(new File(path_media));
 //            return BitmapUtils.processingBitmap(uri, getViewContext());
@@ -382,14 +391,14 @@ public class UploadFragment extends ViewFragment<UploadContract.Presenter> imple
                     else
                         type = Constants.IMAGE_AFTER;
                     if (IsBefore) {
-                        ((ItemModel) adapter.getItem(mPosition)).setImgBefore(path);
+                        ((ItemModel) adapter.getItem(mPosition)).setImgBeforeLocal(path);
                     } else
-                        ((ItemModel) adapter.getItem(mPosition)).setImgAfter(path);
+                        ((ItemModel) adapter.getItem(mPosition)).setImgAfterLocal(path);
                     adapter.notifyDataSetChanged();
 
-//                    mPresenter.postImage(path, type);
-//                    if (file.exists())
-//                        file.delete();
+                    mPresenter.postImage(path, type);
+                    if (file.exists())
+                        file.delete();
                 },
                 onError -> Logger.e("error save image")
         );
