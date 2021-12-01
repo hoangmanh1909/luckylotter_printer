@@ -76,7 +76,12 @@ public interface LuckyLotterApi {
     @GET("api/Result/GetResult")
     Call<DrawResponse> getResult(@Query("date") String date,
                                  @Query("ProductID") int product);
+
     @GET("api/Dictionary/GetAllConfig")
     Call<ParamsResponse> getAllConfig();
+
+    @GET("api/Orders/CountOrderWattingPrint")
+    Call<BaseResponse> countOrderWattingPrint(@Query("productID") int productID,
+                                              @Query("POSID") int POSID);
 
 }

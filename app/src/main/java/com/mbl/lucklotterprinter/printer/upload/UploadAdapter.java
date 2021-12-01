@@ -3,6 +3,7 @@ package com.mbl.lucklotterprinter.printer.upload;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -68,28 +69,20 @@ public class UploadAdapter extends RecyclerBaseAdapter {
             ItemModel itemModel = (ItemModel) model;
             tv_draw.setText("#" + itemModel.getDrawCode() + " " + itemModel.getDrawDate());
 
-            if(itemModel.getProductID() == Constants.PRODUCT_MAX3D)
+            if (itemModel.getProductID() == Constants.PRODUCT_MAX3D)
                 ll_image_after.setVisibility(View.GONE);
 
-            if (itemModel.getImgBefore().startsWith("http")) {
-                Uri url = Uri.parse(itemModel.getImgBefore());
-                image_before.setImageURI(url);
-            } else {
-                File imgFile = new File(itemModel.getImgBefore());
+            if(!TextUtils.isEmpty(itemModel.getImgBeforeLocal())) {
+                File imgFile = new File(itemModel.getImgBeforeLocal());
                 if (imgFile.exists()) {
                     ImageRequestBuilder imageRequestBuilder = ImageRequestBuilder.newBuilderWithSource(Uri.fromFile(imgFile));
                     PipelineDraweeControllerBuilder controllerBuilder = Fresco.newDraweeControllerBuilder()
                             .setImageRequest(imageRequestBuilder.build());
                     image_before.setController(controllerBuilder.build());
                 }
-
             }
-
-            if (itemModel.getImgAfter().startsWith("http")) {
-                Uri url = Uri.parse(itemModel.getImgAfter());
-                image_after.setImageURI(url);
-            } else {
-                File imgFileAfter = new File(itemModel.getImgAfter());
+            if(!TextUtils.isEmpty(itemModel.getImgAfterLocal())) {
+                File imgFileAfter = new File(itemModel.getImgAfterLocal());
                 if (imgFileAfter.exists()) {
                     ImageRequestBuilder imageRequestBuilder = ImageRequestBuilder.newBuilderWithSource(Uri.fromFile(imgFileAfter));
 

@@ -20,7 +20,7 @@ public class TimeService extends Service {
     int startMode;       // indicates how to behave if the service is killed
     IBinder binder;      // interface for clients that bind
     boolean allowRebind; // indicates whether onRebind should be used
-    public static Date date;
+    public static Date dateTimer;
 
     @Override
     public void onCreate() {
@@ -31,11 +31,11 @@ public class TimeService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         // The service is starting, due to a call to startService()
         String strDateTimeNow = intent.getStringExtra(Constants.KEY_DATE_TIME_NOW);
-        date = DateTimeUtils.convertStringToDate(strDateTimeNow, "");
+        Date date = DateTimeUtils.convertStringToDate(strDateTimeNow, "");
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                date = DateUtils.addSeconds(date, 1);
+                dateTimer = DateUtils.addSeconds(date, 1);
             }
         };
         long delay = 1000L;

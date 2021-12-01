@@ -70,6 +70,17 @@
             android:textSize="@dimen/_15sdp"
             android:textStyle="bold"/>
 
+        <TextView
+            android:id="@+id/tv_count_wait_print"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="@dimen/_6sdp"
+            android:text="@string/wait_print_keno"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/_15sdp"
+            android:textStyle="bold"/>
+
     </LinearLayout>
 
     <com.mbl.lucklotterprinter.view.CustomRecyclerView
