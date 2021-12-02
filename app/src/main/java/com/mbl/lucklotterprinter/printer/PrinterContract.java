@@ -18,18 +18,26 @@ public interface PrinterContract {
         void getKenoDraw(String date, int productID, CommonCallback<DrawResponse> callback);
 
         void getOrder(SearchOrderRequest searchOrderRequest, CommonCallback<SearchOrderResponse> callback);
+
         void countOrderWattingPrint(int productID, int POSID, CommonCallback<BaseResponse> callback);
+
+        void getDateTimeNow(CommonCallback<BaseResponse> callback);
     }
 
     interface View extends PresentView<PrinterContract.Presenter> {
+        void showTimeNow(String timeNow);
         void showOrder(List<OrderModel> orderModels);
 
         void showKenoDraw(List<DrawModel> drawModels);
+
         void showCountWaitPrint(int value);
     }
 
     interface Presenter extends IPresenter<PrinterContract.View, PrinterContract.Interactor> {
         void getOrder(int productID);
+
         void countOrderWattingPrint(int productID);
+        void getDateTimeNow();
+        void getKenoDraw();
     }
 }

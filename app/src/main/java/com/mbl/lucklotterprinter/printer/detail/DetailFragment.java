@@ -62,6 +62,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -151,6 +153,7 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     SharedPref sharedPref;
     CountDownTimer cdt;
     int diffPrintSecond = 0;
+    Date serverTime;
 
     public static DetailFragment getInstance() {
         return new DetailFragment();
@@ -231,6 +234,23 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
                 }
             }
         }
+    }
+
+    @Override
+    public void showTimeNow(String timeNow) {
+        serverTime = DateTimeUtils.convertStringToDateDefault(timeNow);
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                serverTime = DateUtils.addSeconds(serverTime, 1);
+                Log.d("Timer", DateTimeUtils.convertDateToString(serverTime, ""));
+            }
+        };
+        long delay = 1000L;
+        Timer timer = new Timer("ServerTimer");
+        timer.schedule(timerTask, 0, delay);
+        if (mPresenter != null)
+            mPresenter.getItemByCode();
     }
 
     @Override
@@ -822,7 +842,6 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     }
 
     private void findCurrentDraw() {
-        Date serverTime = TimeService.dateTimer;
         Date drawDateTime = null;
 
         DrawModel currentDrawModel = null;

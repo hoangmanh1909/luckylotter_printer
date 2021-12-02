@@ -6,6 +6,7 @@ import com.mbl.lucklotterprinter.model.SimpleResult;
 import com.mbl.lucklotterprinter.model.request.ChangeUpImageRequest;
 import com.mbl.lucklotterprinter.model.request.FinishOrderKenoRequest;
 import com.mbl.lucklotterprinter.model.request.OrderImagesRequest;
+import com.mbl.lucklotterprinter.model.response.BaseResponse;
 import com.mbl.lucklotterprinter.model.response.GetItemByCodeResponse;
 import com.mbl.lucklotterprinter.model.response.PrintResponse;
 import com.mbl.lucklotterprinter.model.response.UploadResponse;
@@ -19,6 +20,11 @@ public class DetailInteractor extends Interactor<DetailContract.Presenter>
 
     public DetailInteractor(DetailContract.Presenter presenter) {
         super(presenter);
+    }
+
+    @Override
+    public void getDateTimeNow(CommonCallback<BaseResponse> callback) {
+        NetWorkController.getDateTimeNow(callback);
     }
 
     @Override

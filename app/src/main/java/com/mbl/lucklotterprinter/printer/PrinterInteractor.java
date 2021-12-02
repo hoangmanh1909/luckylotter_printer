@@ -30,4 +30,9 @@ public class PrinterInteractor  extends Interactor<PrinterContract.Presenter>
     public void countOrderWattingPrint(int productID, int POSID, CommonCallback<BaseResponse> callback) {
         NetWorkController.countOrderWattingPrint(productID, POSID, callback);
     }
+
+    @Override
+    public void getDateTimeNow(CommonCallback<BaseResponse> callback) {
+        NetWorkController.getDateTimeNow(callback);
+    }
 }

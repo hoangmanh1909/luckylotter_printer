@@ -15,6 +15,7 @@ import com.mbl.lucklotterprinter.model.SimpleResult;
 import com.mbl.lucklotterprinter.model.request.ChangeUpImageRequest;
 import com.mbl.lucklotterprinter.model.request.FinishOrderKenoRequest;
 import com.mbl.lucklotterprinter.model.request.OrderImagesRequest;
+import com.mbl.lucklotterprinter.model.response.BaseResponse;
 import com.mbl.lucklotterprinter.model.response.GetItemByCodeResponse;
 import com.mbl.lucklotterprinter.model.response.PrintResponse;
 import com.mbl.lucklotterprinter.model.response.UploadResponse;
@@ -41,6 +42,25 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
 
         this.orderModel = orderModel;
         this.drawModels = drawModels;
+    }
+
+    @Override
+    public void getDateTimeNow() {
+        mInteractor.getDateTimeNow(new CommonCallback<BaseResponse>((Activity) mContainerView) {
+            @Override
+            protected void onSuccess(Call<BaseResponse> call, Response<BaseResponse> response) {
+                super.onSuccess(call, response);
+
+                if ("00".equals(response.body().getErrorCode())) {
+                    mView.showTimeNow(String.valueOf(response.body().getValue()));
+                }
+            }
+
+            @Override
+            protected void onError(Call<BaseResponse> call, String message) {
+                super.onError(call, message);
+            }
+        });
     }
 
     @Override
@@ -311,7 +331,10 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
 
     @Override
     public void start() {
-        getItemByCode();
+        if (orderModel.getProductID() == Constants.PRODUCT_KENO)
+            getDateTimeNow();
+        else
+            getItemByCode();
     }
 
     @Override

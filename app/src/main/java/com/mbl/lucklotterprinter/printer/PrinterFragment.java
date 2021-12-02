@@ -32,6 +32,7 @@ import com.mbl.lucklotterprinter.service.TimeService;
 import com.mbl.lucklotterprinter.utils.Constants;
 import com.mbl.lucklotterprinter.utils.DateTimeUtils;
 import com.mbl.lucklotterprinter.utils.SharedPref;
+import com.mbl.lucklotterprinter.utils.TimerThread;
 import com.mbl.lucklotterprinter.utils.Toast;
 import com.mbl.lucklotterprinter.utils.Utils;
 
@@ -82,8 +83,8 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
     List<DrawModel> mDrawModels;
     SharedPref sharedPref;
     CountDownTimer cdt;
-    TimerTask timerTask;
     int productID;
+    Date serverTime;
 
     public static PrinterFragment getInstance() {
         return new PrinterFragment();
@@ -147,6 +148,23 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
     }
 
     @Override
+    public void showTimeNow(String timeNow) {
+        serverTime = DateTimeUtils.convertStringToDateDefault(timeNow);
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                serverTime = DateUtils.addSeconds(serverTime, 1);
+                Log.d("Timer", DateTimeUtils.convertDateToString(serverTime, ""));
+            }
+        };
+        long delay = 1000L;
+        Timer timer = new Timer("ServerTimer");
+        timer.schedule(timerTask, 0, delay);
+        if (mPresenter != null)
+            mPresenter.getKenoDraw();
+    }
+
+    @Override
     public void showOrder(List<OrderModel> orderModels) {
 
         if (orderModels.size() > 0)
@@ -174,7 +192,7 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
     }
 
     private void countWaitPrint() {
-        timerTask = new TimerTask() {
+        TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
                 if (mPresenter != null)
@@ -199,9 +217,9 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
         }
     }
 
+
     private void findCurrentDraw() {
-        Date serverTime = TimeService.dateTimer;
-        Log.e("TimeService.findCurrentDraw", DateTimeUtils.convertDateToString(TimeService.dateTimer,DateTimeUtils.DEFAULT_DATETIME_FORMAT));
+        //Log.e("TimeService.findCurrentDraw", DateTimeUtils.convertDateToString(TimerThread.timer,DateTimeUtils.DEFAULT_DATETIME_FORMAT));
         Date drawDateTime = null;
 
         DrawModel currentDrawModel = null;
@@ -214,8 +232,8 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
                 break;
             }
         }
-        Log.e("TimeService.drawDateTime", DateTimeUtils.convertDateToString(TimeService.dateTimer,DateTimeUtils.DEFAULT_DATETIME_FORMAT));
-        Log.e("TimeService.DrawModel", currentDrawModel.getDrawTime().toString());
+        //Log.e("TimeService.drawDateTime", DateTimeUtils.convertDateToString(drawDateTime,DateTimeUtils.DEFAULT_DATETIME_FORMAT));
+        //Log.e("TimeService.DrawModel", currentDrawModel.getDrawTime().toString());
         if (currentDrawModel != null) {
             int diffPrintSecond = Integer.parseInt(sharedPref.getString(Constants.KEY_DIFF_PRINT_SECOND, ""));
             assert drawDateTime != null;
@@ -250,7 +268,8 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
             @Override
             public void onFinish() {
                 cancel();
-                findCurrentDraw();
+                if (mPresenter != null)
+                    mPresenter.getDateTimeNow();
             }
         };
         cdt.start();
@@ -260,8 +279,6 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
     public void onDestroy() {
         super.onDestroy();
 
-        if (timerTask != null)
-            timerTask.cancel();
         if (cdt != null)
             cdt.cancel();
     }

@@ -34,18 +34,27 @@ public class TimeService extends Service {
         // The service is starting, due to a call to startService()
         String strDateTimeNow = intent.getStringExtra(Constants.KEY_DATE_TIME_NOW);
         dateTimer = DateTimeUtils.convertStringToDateDefault(strDateTimeNow);
-
-        try {
-            while (true) {
-                try {
-                    dateTimer = DateUtils.addSeconds(dateTimer, 1);
-                    //Log.d("Timer",DateTimeUtils.convertDateToString(dateTimer,""));
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                dateTimer = DateUtils.addSeconds(dateTimer, 1);
+//                Log.d("Timer",DateTimeUtils.convertDateToString(dateTimer,""));
             }
-        }catch (Exception e){}
+        };
+        long delay = 1000L;
+        Timer timer = new Timer("TimerGetDateTimeNow");
+        timer.schedule(timerTask, 0, delay);
+//        try {
+//            while (true) {
+//                try {
+//                    dateTimer = DateUtils.addSeconds(dateTimer, 1);
+//                    //Log.d("Timer",DateTimeUtils.convertDateToString(dateTimer,""));
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }catch (Exception e){}
 
         return startMode;
     }

@@ -12,6 +12,7 @@ import com.mbl.lucklotterprinter.model.request.ChangeUpImageRequest;
 import com.mbl.lucklotterprinter.model.request.FinishOrderKenoRequest;
 import com.mbl.lucklotterprinter.model.request.OrderImagesRequest;
 import com.mbl.lucklotterprinter.model.request.SearchOrderRequest;
+import com.mbl.lucklotterprinter.model.response.BaseResponse;
 import com.mbl.lucklotterprinter.model.response.GetItemByCodeResponse;
 import com.mbl.lucklotterprinter.model.response.PrintResponse;
 import com.mbl.lucklotterprinter.model.response.SearchOrderResponse;
@@ -22,6 +23,7 @@ import java.util.List;
 
 public interface DetailContract {
     interface Interactor extends IInteractor<DetailContract.Presenter> {
+        void getDateTimeNow(CommonCallback<BaseResponse> callback);
         void getItemByCode(String code, CommonCallback<GetItemByCodeResponse> callback);
 
         void print(List<ItemModel> itemModels, CommonCallback<PrintResponse> callback);
@@ -36,6 +38,7 @@ public interface DetailContract {
     }
 
     interface View extends PresentView<DetailContract.Presenter> {
+        void showTimeNow(String timeNoe);
         void showItem(List<ItemModel> orderModels, String printCode);
 
         void showPrint(PrintCommandModel printCommandModel);
@@ -46,6 +49,7 @@ public interface DetailContract {
     }
 
     interface Presenter extends IPresenter<DetailContract.View, DetailContract.Interactor> {
+        void getDateTimeNow();
         void getItemByCode();
 
         OrderModel getOrderModel();

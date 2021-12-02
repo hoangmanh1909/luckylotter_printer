@@ -20,6 +20,7 @@ import com.mbl.lucklotterprinter.service.TimeService;
 import com.mbl.lucklotterprinter.utils.Constants;
 import com.mbl.lucklotterprinter.utils.DateTimeUtils;
 import com.mbl.lucklotterprinter.utils.SharedPref;
+import com.mbl.lucklotterprinter.utils.TimerThread;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -94,8 +96,6 @@ public class PrinterPresenter extends Presenter<PrinterContract.View, PrinterCon
 
                 if ("00".equals(response.body().getErrorCode())) {
                     int countWait = (int)Float.parseFloat(response.body().getValue().toString());
-                    Log.e("TimeService", DateTimeUtils.convertDateToString(TimeService.dateTimer,DateTimeUtils.DEFAULT_DATETIME_FORMAT));
-                    Log.e("TimeKEY_DATE_TIME_NOW", sharedPref.getString(Constants.KEY_DATE_TIME_NOW,""));
                     mView.showCountWaitPrint(countWait);
                 }
             }
@@ -109,26 +109,50 @@ public class PrinterPresenter extends Presenter<PrinterContract.View, PrinterCon
 
     @Override
     public void start() {
-        if(mProductID == Constants.PRODUCT_KENO){
-            String currentDate = DateTimeUtils.getCurrentDateString();
-            mInteractor.getKenoDraw(currentDate,Constants.PRODUCT_KENO, new CommonCallback<DrawResponse>((Activity)mContainerView){
-                @Override
-                protected void onSuccess(Call<DrawResponse> call, Response<DrawResponse> response) {
-                    super.onSuccess(call, response);
-
-                    if ("00".equals(response.body().getErrorCode())) {
-                        mView.showKenoDraw(response.body().getDrawModels());
-                    } else {
-                        mView.showOrder(new ArrayList<>());
-                    }
-                }
-
-                @Override
-                protected void onError(Call<DrawResponse> call, String message) {
-                    super.onError(call, message);
-                }
-            });
+        if (mProductID == Constants.PRODUCT_KENO) {
+            getDateTimeNow();
         }
+    }
+
+    @Override
+    public void getDateTimeNow(){
+        mInteractor.getDateTimeNow(new CommonCallback<BaseResponse>((Activity)mContainerView) {
+            @Override
+            protected void onSuccess(Call<BaseResponse> call, Response<BaseResponse> response) {
+                super.onSuccess(call, response);
+
+                if ("00".equals(response.body().getErrorCode())) {
+                    mView.showTimeNow(String.valueOf(response.body().getValue()));
+                }
+            }
+
+            @Override
+            protected void onError(Call<BaseResponse> call, String message) {
+                super.onError(call, message);
+            }
+        });
+    }
+
+    @Override
+    public void getKenoDraw() {
+        String currentDate = DateTimeUtils.getCurrentDateString();
+        mInteractor.getKenoDraw(currentDate,Constants.PRODUCT_KENO, new CommonCallback<DrawResponse>((Activity)mContainerView){
+            @Override
+            protected void onSuccess(Call<DrawResponse> call, Response<DrawResponse> response) {
+                super.onSuccess(call, response);
+
+                if ("00".equals(response.body().getErrorCode())) {
+                    mView.showKenoDraw(response.body().getDrawModels());
+                } else {
+                    mView.showOrder(new ArrayList<>());
+                }
+            }
+
+            @Override
+            protected void onError(Call<DrawResponse> call, String message) {
+                super.onError(call, message);
+            }
+        });
     }
 
     @Override

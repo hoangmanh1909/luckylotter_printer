@@ -17,6 +17,7 @@ import com.mbl.lucklotterprinter.service.TimeService;
 import com.mbl.lucklotterprinter.utils.Constants;
 import com.mbl.lucklotterprinter.utils.DateTimeUtils;
 import com.mbl.lucklotterprinter.utils.SharedPref;
+import com.mbl.lucklotterprinter.utils.TimerThread;
 
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -44,7 +45,7 @@ public class HomePresenter extends Presenter<HomeContract.View, HomeContract.Int
         sharedPref = new SharedPref(activity);
 
         getParams();
-        threadGetDateTimeNow();
+        //threadGetDateTimeNow();
     }
 
     private void threadGetDateTimeNow(){
@@ -66,12 +67,13 @@ public class HomePresenter extends Presenter<HomeContract.View, HomeContract.Int
                 super.onSuccess(call, response);
 
                 if ("00".equals(response.body().getErrorCode())) {
-                    sharedPref.putString(Constants.KEY_DATE_TIME_NOW, String.valueOf(response.body().getValue()));
-                    //Log.e("TimeSever", String.valueOf(response.body().getValue()));
-                    TimeService timeService = new TimeService();
-                    Intent intent = activity.getIntent();
-                    intent.putExtra(Constants.KEY_DATE_TIME_NOW,String.valueOf(response.body().getValue()));
-                    timeService.onStartCommand(intent, 0, 0);
+                    new TimerThread(String.valueOf(response.body().getValue()));
+//                    sharedPref.putString(Constants.KEY_DATE_TIME_NOW, String.valueOf(response.body().getValue()));
+//                    //Log.e("TimeSever", String.valueOf(response.body().getValue()));
+//                    TimeService timeService = new TimeService();
+//                    Intent intent = activity.getIntent();
+//                    intent.putExtra(Constants.KEY_DATE_TIME_NOW,String.valueOf(response.body().getValue()));
+//                    timeService.onStartCommand(intent, 0, 0);
                 }
             }
 
