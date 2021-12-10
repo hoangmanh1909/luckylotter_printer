@@ -209,7 +209,7 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
             item.setPriceA(itemModel.getPriceA());
             item.setPriceB(itemModel.getPriceB());
             item.setPriceC(itemModel.getPriceC());
-            item.setPriceD(itemModel.getPriceC());
+            item.setPriceD(itemModel.getPriceD());
             item.setPriceE(itemModel.getPriceE());
             item.setPriceF(itemModel.getPriceF());
             item.setPrice(itemModel.getPrice());
