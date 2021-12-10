@@ -2,6 +2,7 @@ package com.mbl.lucklotterprinter.printer.detail;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.telephony.mbms.FileInfo;
 import android.text.TextUtils;
@@ -36,12 +37,31 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
 
     OrderModel orderModel;
     List<DrawModel> drawModels;
+    Activity activity;
 
     public DetailPresenter(ContainerView containerView, OrderModel orderModel, List<DrawModel> drawModels) {
         super(containerView);
 
         this.orderModel = orderModel;
         this.drawModels = drawModels;
+    }
+
+    public DetailPresenter(ContainerView containerView) {
+        super(containerView);
+        activity = (Activity) containerView;
+//        this.orderModel = orderModel;
+//        this.drawModels = drawModels;
+    }
+
+    @Override
+    public void start() {
+//        Intent intent = activity.getIntent();
+//        drawModels = (List<DrawModel>) intent.getSerializableExtra(Constants.DRAW_MODEL);
+//        orderModel = (OrderModel) intent.getSerializableExtra(Constants.ORDER_MODEL);
+        if (orderModel.getProductID() == Constants.PRODUCT_KENO)
+            getDateTimeNow();
+        else
+            getItemByCode();
     }
 
     @Override
@@ -329,13 +349,6 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
         mInteractor.changeToImage(request, callback);
     }
 
-    @Override
-    public void start() {
-        if (orderModel.getProductID() == Constants.PRODUCT_KENO)
-            getDateTimeNow();
-        else
-            getItemByCode();
-    }
 
     @Override
     public DetailContract.Interactor onCreateInteractor() {

@@ -52,6 +52,10 @@
         <activity android:name=".printer.PrinterActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".printer.detail.DetailActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name="com.afollestad.materialcamera.CaptureActivity"
             android:screenOrientation="portrait"

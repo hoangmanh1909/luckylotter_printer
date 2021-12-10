@@ -2,6 +2,7 @@ package com.mbl.lucklotterprinter.printer;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
@@ -24,13 +25,16 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.core.base.viper.ViewFragment;
 import com.core.base.viper.interfaces.ContainerView;
 import com.mbl.lucklotterprinter.R;
+import com.mbl.lucklotterprinter.login.LoginActivity;
 import com.mbl.lucklotterprinter.model.DrawModel;
 import com.mbl.lucklotterprinter.model.OrderModel;
 import com.mbl.lucklotterprinter.model.ProductModel;
+import com.mbl.lucklotterprinter.printer.detail.DetailActivity;
 import com.mbl.lucklotterprinter.printer.detail.DetailPresenter;
 import com.mbl.lucklotterprinter.service.TimeService;
 import com.mbl.lucklotterprinter.utils.Constants;
 import com.mbl.lucklotterprinter.utils.DateTimeUtils;
+import com.mbl.lucklotterprinter.utils.DialogUtils;
 import com.mbl.lucklotterprinter.utils.SharedPref;
 import com.mbl.lucklotterprinter.utils.TimerThread;
 import com.mbl.lucklotterprinter.utils.Toast;
@@ -39,6 +43,7 @@ import com.mbl.lucklotterprinter.utils.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -112,7 +117,13 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
 
                 holder.itemView.setOnClickListener(v -> {
                     if (IsPrint)
+                    {
+//                        Intent intent = new Intent(requireActivity(), DetailActivity.class);
+//                        intent.putExtra(Constants.ORDER_MODEL,mOrderModels.get(position));
+//                        intent.putExtra(Constants.DRAW_MODEL,(Serializable) mDrawModels);
+//                        requireActivity().startActivity(intent);
                         new DetailPresenter((ContainerView) getBaseActivity(), mOrderModels.get(position), mDrawModels).pushView();
+                    }
                     else
                         Toast.showToast(requireContext(), "Đã hết thời gian in vé");
                 });
@@ -144,6 +155,19 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
 
         if (mPresenter != null) {
             mPresenter.getOrder(productID);
+        }else{
+            DialogUtils.showOptionAction(
+                    getContext(),
+                    "Hệ thống đang có lỗi! Bạn có muốn tìm kiếm lại dữ liệu?",
+                    "Tìm kiếm",
+                    "Hủy",
+                    (dialog, which) -> {
+                        mPresenter.getOrder(productID);
+                        dialog.dismiss();
+                    }, (dialog, which) -> {
+                        mPresenter.back();
+                        dialog.dismiss();
+                    });
         }
     }
 

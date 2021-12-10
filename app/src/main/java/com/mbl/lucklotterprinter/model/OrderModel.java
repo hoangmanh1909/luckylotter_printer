@@ -3,7 +3,9 @@ package com.mbl.lucklotterprinter.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class OrderModel {
+import java.io.Serializable;
+
+public class OrderModel implements Serializable {
 
     @SerializedName("OrderCode")
     @Expose

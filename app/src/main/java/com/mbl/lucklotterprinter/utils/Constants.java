@@ -14,6 +14,9 @@ public class Constants {
     public static final String BLUETOOTH_NAME = "BLUETOOTH_NAME";
     public static final String PRODUCT_ID = "PRODUCT_ID";
 
+    public static final String ORDER_MODEL = "ORDER_MODEL";
+    public static final String DRAW_MODEL = "DRAW_MODEL";
+
     public static final String IMAGE_BEFORE = "IMAGE_BEFORE";
     public static final String IMAGE_AFTER = "IMAGE_AFTER";
 

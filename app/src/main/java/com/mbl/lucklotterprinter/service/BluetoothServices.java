@@ -66,10 +66,10 @@ public class BluetoothServices extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        String deviceg = intent.getStringExtra("bluetooth_device");
+        String device = intent.getStringExtra("bluetooth_device");
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        connectToDevice(deviceg);
+        connectToDevice(device);
 
         return START_STICKY;
     }
@@ -208,7 +208,7 @@ public class BluetoothServices extends Service {
         }
     }
 
-    private class ConnectedBtThread extends Thread {
+    private static class ConnectedBtThread extends Thread {
         private final BluetoothSocket cSocket;
         private final InputStream inS;
         private final OutputStream outS;

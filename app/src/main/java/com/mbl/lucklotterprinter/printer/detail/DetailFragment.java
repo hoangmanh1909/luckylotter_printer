@@ -186,7 +186,6 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
 
         if (mPresenter != null) {
             mOrderModel = mPresenter.getOrderModel();
-
             switch (mOrderModel.getProductID()) {
                 case Constants.PRODUCT_MEGA:
                     img_logo.setImageResource(R.drawable.home_mega);
@@ -243,7 +242,7 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
             @Override
             public void run() {
                 serverTime = DateUtils.addSeconds(serverTime, 1);
-                Log.d("Timer", DateTimeUtils.convertDateToString(serverTime, ""));
+                //Log.d("Timer", DateTimeUtils.convertDateToString(serverTime, ""));
             }
         };
         long delay = 1000L;
@@ -494,7 +493,6 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
             }
 
             Date drawDateTime = DateTimeUtils.convertStringToDateDefault(currentDrawModel.getDrawDate() + " " + currentDrawModel.getDrawTime());
-            Date serverTime = TimeService.dateTimer;
 
             if (DateTimeUtils.compareToDay(serverTime, DateUtils.addMinutes(DateUtils.addSeconds(drawDateTime, diffPrintSecond), -10)) < 0) {
                 Toast.showToast(getViewContext(), "Đơn hàng chưa đến thời gian mở bán");
@@ -509,7 +507,7 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
     }
 
     private void printed() {
-        if(mOrderModel.getProductID() == Constants.PRODUCT_KENO){
+        if (mOrderModel.getProductID() == Constants.PRODUCT_KENO) {
             DrawModel currentDrawModel = null;
             for (DrawModel drawModel : mDrawModels) {
                 if (drawModel.getDrawCode().equals(mItemModels.get(0).getDrawCode())) {
@@ -523,7 +521,6 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
             }
 
             Date drawDateTime = DateTimeUtils.convertStringToDateDefault(currentDrawModel.getDrawDate() + " " + currentDrawModel.getDrawTime());
-            Date serverTime = TimeService.dateTimer;
 
             if (DateTimeUtils.compareToDay(serverTime, DateUtils.addMinutes(DateUtils.addSeconds(drawDateTime, diffPrintSecond), -10)) < 0) {
                 Toast.showToast(getViewContext(), "Đơn hàng chưa đến thời gian mở bán");

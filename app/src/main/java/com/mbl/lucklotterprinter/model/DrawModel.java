@@ -3,7 +3,9 @@ package com.mbl.lucklotterprinter.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class DrawModel {
+import java.io.Serializable;
+
+public class DrawModel implements Serializable {
     @SerializedName("ID")
     @Expose
     private Integer id;

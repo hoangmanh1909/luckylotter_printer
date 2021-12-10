@@ -15,7 +15,7 @@ public class TimerThread {
         new Thread(() -> {
             while (true){
                 timer = DateUtils.addSeconds(timer, 1);
-                Log.d("Timer",DateTimeUtils.convertDateToString(timer,""));
+//                Log.d("Timer",DateTimeUtils.convertDateToString(timer,""));
 
                 try {
                     Thread.sleep(1000);
