@@ -19,6 +19,7 @@ import com.mbl.lucklotterprinter.model.request.OrderTablesImagesRequest;
 import com.mbl.lucklotterprinter.model.response.UploadResponse;
 import com.mbl.lucklotterprinter.network.CommonCallback;
 import com.mbl.lucklotterprinter.printer.PrinterActivity;
+import com.mbl.lucklotterprinter.printer.detail.DetailActivity;
 import com.mbl.lucklotterprinter.utils.Constants;
 import com.mbl.lucklotterprinter.utils.SharedPref;
 import com.mbl.lucklotterprinter.utils.Toast;
@@ -133,8 +134,7 @@ public class UploadPresenter extends Presenter<UploadContract.View, UploadContra
                     Toast.showToast(getViewContext(), "Cập nhật thành công");
 
                     new Handler().postDelayed(() -> {
-                        back();
-                        back();
+                        finishActivity(DetailActivity.class);
                     }, 2000);
                 }
             }
@@ -161,8 +161,7 @@ public class UploadPresenter extends Presenter<UploadContract.View, UploadContra
                     Toast.showToast(getViewContext(), "Cập nhật thành công");
 
                     new Handler().postDelayed(() -> {
-                        back();
-                        back();
+                        finishActivity(DetailActivity.class);
                     }, 2000);
                 }
             }

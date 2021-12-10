@@ -118,11 +118,11 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
                 holder.itemView.setOnClickListener(v -> {
                     if (IsPrint)
                     {
-//                        Intent intent = new Intent(requireActivity(), DetailActivity.class);
-//                        intent.putExtra(Constants.ORDER_MODEL,mOrderModels.get(position));
-//                        intent.putExtra(Constants.DRAW_MODEL,(Serializable) mDrawModels);
-//                        requireActivity().startActivity(intent);
-                        new DetailPresenter((ContainerView) getBaseActivity(), mOrderModels.get(position), mDrawModels).pushView();
+                        Intent intent = new Intent(requireActivity(), DetailActivity.class);
+                        intent.putExtra(Constants.ORDER_MODEL,mOrderModels.get(position));
+                        intent.putExtra(Constants.DRAW_MODEL,(Serializable) mDrawModels);
+                        startActivity(intent);
+                        //new DetailPresenter((ContainerView) getBaseActivity(), mOrderModels.get(position), mDrawModels).pushView();
                     }
                     else
                         Toast.showToast(requireContext(), "Đã hết thời gian in vé");

@@ -39,12 +39,12 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
     List<DrawModel> drawModels;
     Activity activity;
 
-    public DetailPresenter(ContainerView containerView, OrderModel orderModel, List<DrawModel> drawModels) {
-        super(containerView);
-
-        this.orderModel = orderModel;
-        this.drawModels = drawModels;
-    }
+//    public DetailPresenter(ContainerView containerView, OrderModel orderModel, List<DrawModel> drawModels) {
+//        super(containerView);
+//
+//        this.orderModel = orderModel;
+//        this.drawModels = drawModels;
+//    }
 
     public DetailPresenter(ContainerView containerView) {
         super(containerView);
@@ -55,9 +55,9 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
 
     @Override
     public void start() {
-//        Intent intent = activity.getIntent();
-//        drawModels = (List<DrawModel>) intent.getSerializableExtra(Constants.DRAW_MODEL);
-//        orderModel = (OrderModel) intent.getSerializableExtra(Constants.ORDER_MODEL);
+        Intent intent = activity.getIntent();
+        drawModels = (List<DrawModel>) intent.getSerializableExtra(Constants.DRAW_MODEL);
+        orderModel = (OrderModel) intent.getSerializableExtra(Constants.ORDER_MODEL);
         if (orderModel.getProductID() == Constants.PRODUCT_KENO)
             getDateTimeNow();
         else

@@ -184,8 +184,12 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
         else
             tvBluetooth.setText("Kết nối thất bại " + deviceBluetooth);
 
-        if (mPresenter != null) {
-            mOrderModel = mPresenter.getOrderModel();
+        Intent intent = requireActivity().getIntent();
+        mDrawModels = (List<DrawModel>) intent.getSerializableExtra(Constants.DRAW_MODEL);
+        mOrderModel = (OrderModel) intent.getSerializableExtra(Constants.ORDER_MODEL);
+
+        if (mOrderModel != null) {
+            //mOrderModel = mPresenter.getOrderModel();
             switch (mOrderModel.getProductID()) {
                 case Constants.PRODUCT_MEGA:
                     img_logo.setImageResource(R.drawable.home_mega);
