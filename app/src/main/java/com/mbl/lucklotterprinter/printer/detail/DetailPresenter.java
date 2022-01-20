@@ -284,7 +284,11 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
 
                 if ("00".equals(response.body().getErrorCode())) {
                     Toast.showToast(getViewContext(), "Cập nhật thành công");
-                    back();
+                    new Handler().postDelayed(() -> {
+                        activity.finish();
+                    }, 2000);
+                } else {
+                    Toast.showToast(getViewContext(), response.body().getMessage());
                 }
             }
 
@@ -292,6 +296,7 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
             protected void onError(Call<SimpleResult> call, String message) {
                 super.onError(call, message);
                 mView.hideProgress();
+                Toast.showToast(getViewContext(), message);
             }
         };
         mInteractor.finishOrderKeno(request, callback);
@@ -309,8 +314,10 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
                 if ("00".equals(response.body().getErrorCode())) {
                     Toast.showToast(getViewContext(), "Cập nhật thành công");
                     new Handler().postDelayed(() -> {
-                        back();
+                        activity.finish();
                     }, 2000);
+                } else {
+                    Toast.showToast(getViewContext(), response.body().getMessage());
                 }
             }
 
@@ -318,6 +325,7 @@ public class DetailPresenter extends Presenter<DetailContract.View, DetailContra
             protected void onError(Call<SimpleResult> call, String message) {
                 super.onError(call, message);
                 mView.hideProgress();
+                Toast.showToast(getViewContext(), message);
             }
         };
         mInteractor.updateImage(request, callback);

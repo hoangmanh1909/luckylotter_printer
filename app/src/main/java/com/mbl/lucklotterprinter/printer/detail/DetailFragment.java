@@ -544,12 +544,12 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
             btnCapture.setEnabled(true);
 
         }
-
         btnReject.setEnabled(false);
-        if (mItemModels.size() > 0)
-            btnOk.setEnabled(true);
+
         if (mOrderModel.getProductID() == Constants.PRODUCT_KENO || (mItemModels.size() == 1 && mOrderModel.getProductID() == Constants.PRODUCT_MAX3D)) {
             capturePermission(false);
+        } else {
+            btnOk.setEnabled(true);
         }
     }
 
@@ -590,11 +590,10 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
         btnPrint.setEnabled(false);
         if (mItemModels.size() == 1 || mOrderModel.getProductID() == Constants.PRODUCT_KENO) {
             btnCapture.setEnabled(true);
-        }
-
-        btnReject.setEnabled(false);
-        if (mItemModels.size() > 0)
+        } else {
             btnOk.setEnabled(true);
+        }
+        btnReject.setEnabled(false);
         if (IsKenoPlus)
             new Thread(() -> printKenoPlus(printCommandModel)).start();
         else
@@ -609,8 +608,11 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
                     && mOrderModel.getProductID() != Constants.PRODUCT_MAX3D) {
                 IsBefore = false;
                 capturePermission(true);
+            } else {
+                btnOk.setEnabled(true);
             }
         } else {
+            btnOk.setEnabled(true);
             mFileAfter = file;
         }
     }
@@ -734,8 +736,8 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
             if (IsBefore) {
                 String drawCode = "";
                 String drawDate = "";
-                if (!TextUtils.isEmpty(systematic))
-                    systematic = " - " + systematic;
+//                if (!TextUtils.isEmpty(systematic))
+//                    systematic = " - " + systematic;
                 if (mOrderModel.getProductID() == Constants.PRODUCT_KENO) {
                     if (mItemModels.size() > 1) {
                         drawCode = mItemModels.get(0).getDrawCode() + ";" + mItemModels.get(mItemModels.size() - 1).getDrawCode();
@@ -749,7 +751,7 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
                     drawDate = mItemModels.get(0).getDrawDate();
                 }
                 return drawViewUtils.processingBitmapBefore(uri,
-                        Utils.getProductName(mOrderModel.getProductID()) + systematic,
+                        Utils.getProductName(mOrderModel.getProductID()) + " " + systematic,
                         mLineModels,
                         drawDate,
                         drawCode,
@@ -816,9 +818,9 @@ public class DetailFragment extends ViewFragment<DetailContract.Presenter> imple
                     draw = "Kỳ #" + drawFist + ", Ngày quay:" + mItemModels.get(0).getDrawDate();
                 }
             }
-            if (!TextUtils.isEmpty(systematic))
-                systematic = " - " + systematic;
-            info = Utils.getInfoImageBefore(requireActivity(), mLineModels, Utils.getProductName(mOrderModel.getProductID()) + systematic, draw, IsAmount);
+//            if (!TextUtils.isEmpty(systematic))
+//                systematic = " - " + systematic;
+            info = Utils.getInfoImageBefore(requireActivity(), mLineModels, Utils.getProductName(mOrderModel.getProductID()) + " " + systematic, draw, IsAmount);
         } else {
             info = infoAfter;
         }

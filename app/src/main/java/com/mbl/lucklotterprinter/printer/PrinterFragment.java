@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -156,18 +157,26 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
         if (mPresenter != null) {
             mPresenter.getOrder(productID);
         }else{
-            DialogUtils.showOptionAction(
-                    getContext(),
-                    "Hệ thống đang có lỗi! Bạn có muốn tìm kiếm lại dữ liệu?",
-                    "Tìm kiếm",
-                    "Hủy",
-                    (dialog, which) -> {
-                        mPresenter.getOrder(productID);
-                        dialog.dismiss();
-                    }, (dialog, which) -> {
-                        mPresenter.back();
-                        dialog.dismiss();
-                    });
+            DialogUtils.showDialogMessage(getContext(), "Thông báo", "Hệ thông đang có lỗi! vui lòng quay lại sau.", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mPresenter.back();
+                    dialog.dismiss();
+                }
+            },false);
+
+//            ).showOptionAction(
+//                    getContext(),
+//                    "Hệ thống đang có lỗi! Bạn có muốn tìm kiếm lại dữ liệu?",
+//                    "Tìm kiếm",
+//                    "Hủy",
+//                    (dialog, which) -> {
+//                        mPresenter.getOrder(productID);
+//                        dialog.dismiss();
+//                    }, (dialog, which) -> {
+//                        mPresenter.back();
+//                        dialog.dismiss();
+//                    });
         }
     }
 
@@ -178,7 +187,7 @@ public class PrinterFragment extends ViewFragment<PrinterContract.Presenter> imp
             @Override
             public void run() {
                 serverTime = DateUtils.addSeconds(serverTime, 1);
-                Log.d("Timer", DateTimeUtils.convertDateToString(serverTime, ""));
+//                Log.d("Timer", DateTimeUtils.convertDateToString(serverTime, ""));
             }
         };
         long delay = 1000L;

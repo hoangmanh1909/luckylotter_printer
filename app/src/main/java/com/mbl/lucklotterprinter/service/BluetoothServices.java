@@ -192,7 +192,7 @@ public class BluetoothServices extends Service {
                 setState(STATE_FAIL);
             }
             //connected(mSocket);
-            setState(STATE_CONNECTED);
+            //setState(STATE_CONNECTED);
 //            mConnectedThread = new ConnectedBtThread(mSocket);
 //            mConnectedThread.start();
         }
